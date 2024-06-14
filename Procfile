@@ -1,1 +1,1 @@
-web: gunicorn EBARestAPIServer.wsgi --log-file -
+web: gunicorn EBARestAPIServer.wsgi:application --log-file -
