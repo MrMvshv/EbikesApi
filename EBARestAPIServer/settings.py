@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-*xm3t@6%j9)%wbfe4s)*9qxe-)auivow$*8h8p&9c2(=4gy5r7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://ebikesapi-53b660e146e7.herokuapp.com/']
 
 
 # Application definition
