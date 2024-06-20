@@ -21,7 +21,8 @@ def calculate_distance(request):
     if not all([origin_lat, origin_long, destination_lat, destination_long]):
         return JsonResponse({'error': 'Missing required parameters'}, status=400)
 
-    api_key = settings.GOOGLE_API_KEY
+#    api_key = settings.GOOGLE_API_KEY
+    api_key = 'AIzaSyCN-0aWhXvbLH4e62-UQWLp2eNKA8dP--4'
     origin = f"{origin_lat},{origin_long}"
     destination = f"{destination_lat},{destination_long}"
 
