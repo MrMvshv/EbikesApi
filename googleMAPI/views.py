@@ -34,7 +34,8 @@ def calculate_distance(request):
     data = response.json()
 
     if data['status'] != 'OK':
-        return JsonResponse({'error': 'Error from Google API'}, status=500)
+        error_message = data.get('error_message', 'Unknown error')
+        return JsonResponse({'error': 'Error from Google API', 'message': error_message}, status=500)
 
     try:
         distance_text = data['rows'][0]['elements'][0]['distance']['text']
