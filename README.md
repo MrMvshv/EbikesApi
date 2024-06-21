@@ -2,7 +2,7 @@
 REST api server built for Ebikes Africa using django framework.
 
 <h2> Folder tree Structure </h2>
-
+'''
 Ebikes Api
     -> EBApi (contains routing configs for EBA fleetbase inter-ops)
         - urls.py
@@ -19,13 +19,14 @@ Ebikes Api
     -> tests
         - maptry.py (test for calculate dist endpoint)
     - manage.py
-
+'''
 <h2> Run the app </h2>
 - After cloning, run
+'''
 > source myenv/bin/activate
 > pip install -r requirements.txt
 > python manage.py runserver
-
+'''
 - The api should be accessible on localhost:8000
 
 <h2> Routes </h2>
