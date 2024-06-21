@@ -20,12 +20,19 @@ Ebikes Api
         - maptry.py (test for calculate dist endpoint)
     - manage.py
 
-        
+<h2> Run the app </h2>
+- After cloning, run
+> source myenv/bin/activate
+> pip install -r requirements.txt
+> python manage.py runserver
+
+- The api should be accessible on localhost:8000
+
 <h2> Routes </h2>
 
-deployed heroku endpoint: https://ebikesbackend-593c3249d102.herokuapp.com/
+Deployed heroku endpoint: https://ebikesbackend-593c3249d102.herokuapp.com/
 
-paths:
+Paths:
     /       -> root route status, returns 200 ok
     /time   -> returns current server time
 
@@ -34,13 +41,13 @@ paths:
     /google_api -> returns 200 ok for google maps endpoints accessible
 
     /google_api/calculate-distance ->
-    
+
     URL: /google_api/calculate-distance/ Method: POST Permissions: Open to all (AllowAny)
 
 Request Headers Ensure that the request contains the following headers: Content-Type: application/json
 Body Parameters
 
-Parameter Type Description
+# Parameter Type Description
 
     origin_lat float Latitude of the origin
     origin_long float Longitude of the origin
@@ -48,7 +55,8 @@ Parameter Type Description
     destination_long float Longitude of the destination
 
 JSON {  "origin_lat": -1.3433182103402546,  "origin_long": 6.76600758309724, "destination_lat": -1.3913519108241854,  "destination_long": 36.76051708309745}
-Response
+
+# Response
 
 Successful Response (200 OK) Returns the delivery price based on the calculated distance. {  "delivery_price": 225.0 }
 Error Responses
@@ -58,7 +66,7 @@ Error Responses
 500 Internal Server Error: Error from the Google API or invalid response structure.  { "error": "Error from Google API"}
 
  {  "error": "Invalid response from Google API"}
-How to Use with Postman
+# How to test with Postman
 
     Open Postman.
     Create a new request.
