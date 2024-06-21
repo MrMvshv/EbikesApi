@@ -2,31 +2,35 @@
 REST api server built for Ebikes Africa using django framework.
 
 <h2> Folder tree Structure </h2>
-'''
+
 Ebikes Api
-    -> EBApi (contains routing configs for EBA fleetbase inter-ops)
+
+    - EBApi (contains routing configs for EBA fleetbase inter-ops)
         - urls.py
         - views.py
-    -> EBARestAPIServer (contains overall server configs and root route switching)
+    - EBARestAPIServer (contains overall server configs and root route switching)
         - asgi.py
         - settings.py
         - urls.py
         - wsgi.py
-    -> googleMAPI (contains route servr configs for routes using google distance matrix api)
+    - googleMAPI (contains route servr configs for routes using google distance matrix api)
         - urls.py
         - views.py
-    -> myenv
-    -> tests
+    - myenv
+    - tests
         - maptry.py (test for calculate dist endpoint)
     - manage.py
-'''
+
 <h2> Run the app </h2>
-- After cloning, run
-'''
+
+After cloning, run
+
 > source myenv/bin/activate
+
 > pip install -r requirements.txt
+
 > python manage.py runserver
-'''
+
 - The api should be accessible on localhost:8000
 
 <h2> Routes </h2>
@@ -34,7 +38,9 @@ Ebikes Api
 Deployed heroku endpoint: https://ebikesbackend-593c3249d102.herokuapp.com/
 
 Paths:
+
     /       -> root route status, returns 200 ok
+
     /time   -> returns current server time
 
 <h4> gmapi endpoints </h4>
@@ -46,9 +52,10 @@ Paths:
     URL: /google_api/calculate-distance/ Method: POST Permissions: Open to all (AllowAny)
 
 Request Headers Ensure that the request contains the following headers: Content-Type: application/json
-Body Parameters
 
-# Parameter Type Description
+# Body Parameters
+
+## Parameter Type Description
 
     origin_lat float Latitude of the origin
     origin_long float Longitude of the origin
@@ -57,7 +64,7 @@ Body Parameters
 
 JSON {  "origin_lat": -1.3433182103402546,  "origin_long": 6.76600758309724, "destination_lat": -1.3913519108241854,  "destination_long": 36.76051708309745}
 
-# Response
+## Response
 
 Successful Response (200 OK) Returns the delivery price based on the calculated distance. {  "delivery_price": 225.0 }
 Error Responses
@@ -67,7 +74,8 @@ Error Responses
 500 Internal Server Error: Error from the Google API or invalid response structure.  { "error": "Error from Google API"}
 
  {  "error": "Invalid response from Google API"}
-# How to test with Postman
+
+## How to test with Postman
 
     Open Postman.
     Create a new request.
