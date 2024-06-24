@@ -1,5 +1,10 @@
 # EBIKESAPI
+
 REST api server built for Ebikes Africa using django framework.
+
+## API DOCUMENTATION
+
+The API documentation is available on the `/docs` endpoint
 
 <h2> Folder tree Structure </h2>
 
@@ -62,18 +67,18 @@ Request Headers Ensure that the request contains the following headers: Content-
     destination_lat float Latitude of the destination
     destination_long float Longitude of the destination
 
-JSON {  "origin_lat": -1.3433182103402546,  "origin_long": 6.76600758309724, "destination_lat": -1.3913519108241854,  "destination_long": 36.76051708309745}
+JSON { "origin_lat": -1.3433182103402546, "origin_long": 6.76600758309724, "destination_lat": -1.3913519108241854, "destination_long": 36.76051708309745}
 
 ## Response
 
-Successful Response (200 OK) Returns the delivery price based on the calculated distance. {  "delivery_price": 225.0 }
+Successful Response (200 OK) Returns the delivery price based on the calculated distance. { "delivery_price": 225.0 }
 Error Responses
 
-400 Bad Request: Missing required parameters. {  "error": "Missing required parameters"}
+400 Bad Request: Missing required parameters. { "error": "Missing required parameters"}
 
-500 Internal Server Error: Error from the Google API or invalid response structure.  { "error": "Error from Google API"}
+500 Internal Server Error: Error from the Google API or invalid response structure. { "error": "Error from Google API"}
 
- {  "error": "Invalid response from Google API"}
+{ "error": "Invalid response from Google API"}
 
 ## How to test with Postman
 
@@ -88,4 +93,3 @@ http://127.0.0.1:8000/google_api/calculate-distance/
 For example, to calculate the distance and delivery price between Point A and Point B:
 
 {"origin_lat": -1.3433182103402546,"origin_long": 36.6600758309724,"destination_lat": -1.3913519108241854,"destination_long": 36.76051708309745}
-
