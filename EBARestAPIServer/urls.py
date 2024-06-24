@@ -22,4 +22,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('EBApi.urls')),
     path('google_api/', include('googleMAPI.urls')),
+    path('fleetbase_api/', include('fleetbaseAPI.urls')),
+
 ]
