@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'rest_framework',
+     'rest_framework_docs',
+     'drf_yasg2',
     'corsheaders',
+    "drf_spectacular"
 ]
 
 MIDDLEWARE = [
@@ -132,3 +135,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    "title":"Your API Title",
+    #   "default_version":'v1',
+    #   "description":"Your API description",
+    #   "terms_of_service":"https://www.example.com/policies/terms/",
+    #   "contact":openapi.Contact(email="contact@example.com"),
+    #   "license":openapi.License(name="BSD License"),
+}
