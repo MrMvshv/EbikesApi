@@ -16,7 +16,7 @@ def status(request):
     responses={201: DistanceSerializer,  400: OpenApiTypes.OBJECT, 
         500: OpenApiTypes.OBJECT}
 )
-class calculateDistanceView(GenericAPIView):
+class calculateDistanceAndDeliveryFeeView(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = DistanceSerializer
 
@@ -59,7 +59,7 @@ class calculateDistanceView(GenericAPIView):
 
         delivery_price = calculate_delivery_price(distance_km)
 
-        return JsonResponse({'delivery_price': delivery_price})
+        return JsonResponse({'delivery_price': delivery_price, 'distance_in_km': distance_km})
 
 
 
