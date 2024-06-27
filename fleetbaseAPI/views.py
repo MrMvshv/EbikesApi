@@ -1,7 +1,8 @@
+import logging
 import requests
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -11,6 +12,10 @@ from django.test import RequestFactory
 from drf_spectacular.utils import extend_schema,OpenApiTypes
 
 factory = RequestFactory()
+
+# Initialize logging
+logger = logging.getLogger(__name__)
+
 
 FLEETBASE_API_URL_PLACES = "https://api.fleetbase.io/v1/places"
 FLEETBASE_API_URL_PAYLOAD = "https://api.fleetbase.io/v1/payloads"
@@ -35,7 +40,6 @@ class CreatePlaceView(GenericAPIView):
         """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            # Prepare the data to send to Fleetbase
             payload = {
                 'name': serializer.validated_data['name'],
                 'latitude': serializer.validated_data['latitude'],
@@ -45,17 +49,25 @@ class CreatePlaceView(GenericAPIView):
                 'Authorization': f'Bearer {FLEETBASE_API_KEY}',
                 'Content-Type': 'application/json'
             }
-            # Make the request to Fleetbase
-            response = requests.post(FLEETBASE_API_URL_PLACES, json=payload, headers=headers)
-            if response.status_code == 201:
-                place_data = response.json()
-                place_id = place_data.get('id')
-                request.session['dropoff_id'] = place_id
-                return Response({'dropoff_place_id': place_id}, status=status.HTTP_201_CREATED)
-            else:
-                return Response(response.json(), status=response.status_code)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                response = requests.post(FLEETBASE_API_URL_PLACES, json=payload, headers=headers)
+                response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+                if response.status_code == 201:
+                    place_data = response.json()
+                    place_id = place_data.get('id')
+                    request.session['dropoff_id'] = place_id
+                    print("PLACE SUCCESSFULLY CREATED: %s", place_id)
+                    return Response({'place_id': place_id}, status=response.status_code)
+                else:
 
+                    logger.warning("PLACE ALREADY EXISTS: %s", response.json())
+                    return Response(response.json(), status=response.status_code)
+            except requests.exceptions.RequestException as e:
+                logger.error("Error in creating place: %s", str(e))
+                return Response({'detail': 'Error in creating place'}, status=response.status_code)
+        else:
+            logger.warning("Invalid data: %s", serializer.errors)
+            return Response(serializer.errors, status=response.status_code)
 
 @extend_schema(
     request=PayloadSerializer,
@@ -93,10 +105,10 @@ class CreatePayloadView(GenericAPIView):
                 payload_data = response.json()
                 payload_id = payload_data.get('id')
                 request.session['payload_id'] = payload_id
-                return Response({'payload_id': payload_id}, status=status.HTTP_201_CREATED)
+                return Response({'payload_id': payload_id}, status=response.status_code)
             else:
                 return Response(response.json(), status=response.status_code)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=response.status_code)
 
 
 @extend_schema(
@@ -161,6 +173,7 @@ class CreateOrderView(GenericAPIView):
             'type': request.data.get('type')
         }
         payload_response = fn_create_payload(payload_data)
+
         if payload_response.status_code != 201:
             return payload_response
         payload_id = payload_response.data.get('payload_id')
@@ -183,11 +196,14 @@ class CreateOrderView(GenericAPIView):
         }
         # Make the request to Fleetbase
         response = requests.post(FLEETBASE_API_URL_ORDER, json=order_data, headers=headers)
+        print(response.status_code)
+
         if response.status_code == 201:
+            print(response.status_code)
             order_data = response.json()
             order_id = order_data.get('id')
             print(f"--------------- ORDER SUCCESSFULLY CREATED {order_id}---------------")
-            return Response({'order_id': order_id}, status=status.HTTP_201_CREATED)
+            return Response({'order_id': order_id}, status=response.status_code)
         else:
             return Response(response.json(), status=response.status_code)
 
@@ -215,7 +231,7 @@ def fn_create_place(place_data):
         if response.status_code == 201:
             place_data = response.json()
             place_id = place_data.get('id')
-            return Response({'place_id': place_id}, status=status.HTTP_201_CREATED)
+            return Response({'place_id': place_id}, status=response.status_code)
         else:
             return Response(response.json(), status=response.status_code)
     else:
@@ -245,7 +261,7 @@ def fn_create_payload(payload_data):
         if response.status_code == 201:
             payload_data = response.json()
             payload_id = payload_data.get('id')
-            return Response({'payload_id': payload_id}, status=status.HTTP_201_CREATED)
+            return Response({'payload_id': payload_id}, status=response.status_code)
         else:
             return Response(response.json(), status=response.status_code)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
