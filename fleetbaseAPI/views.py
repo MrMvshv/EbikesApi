@@ -1,5 +1,6 @@
 import logging
 import requests
+import json
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.http import HttpRequest, JsonResponse
@@ -184,7 +185,7 @@ class CreateOrderView(GenericAPIView):
         order_data = {
             'payload': payload_id,
             'dispatch': request.data.get('dispatch', True),
-            'type': request.data.get('order_type'),
+            'type': request.data.get('type'),
             'facilitator': request.data.get('facilitator'),
             'customer': request.data.get('customer'),
             'notes': request.data.get('delivery_notes', ''),
@@ -208,6 +209,33 @@ class CreateOrderView(GenericAPIView):
             return Response(response.json(), status=response.status_code)
 
 
+# --------------------------------------
+
+
+@extend_schema(
+    request=OrderSerializer,
+    responses={201: OrderSerializer, 400: OpenApiTypes.OBJECT, 
+        500: OpenApiTypes.OBJECT}
+)
+class UpdateOrderView(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = OrderSerializer
+
+    def post(self, request):
+        """
+        Update order.
+        """
+        try:
+            data = json.loads(request.body)
+            # Print the raw JSON data to the console
+            print(data)
+            
+            # Assuming you have some processing logic here
+            # process_data(data)
+            
+            return Response({'message': 'Data received successfully', 'data': data}, status=status.HTTP_201_CREATED)
+        except json.JSONDecodeError:
+            return Response({'error': 'Invalid JSON'}, status=status.HTTP_400_BAD_REQUEST)
 
 # --------------------------------------
 def fn_create_place(place_data):
