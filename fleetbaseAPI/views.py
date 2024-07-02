@@ -226,9 +226,9 @@ class UpdateOrderView(GenericAPIView):
             # Assuming you have some processing logic here
             # process_data(data)
             
-            return Response({'message': 'Data received successfully', 'data': data}, status=response.status_code)
+            return data
         except json.JSONDecodeError:
-            return Response({'error': 'Invalid JSON'}, status=response.status_code)
+            return Response({'error': 'Invalid JSON'})
 
 # --------------------------------------
 def fn_create_place(place_data):
