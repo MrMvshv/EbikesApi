@@ -211,15 +211,8 @@ class CreateOrderView(GenericAPIView):
 
 # --------------------------------------
 
-
-@extend_schema(
-    request=OrderSerializer,
-    responses={201: OrderSerializer, 400: OpenApiTypes.OBJECT, 
-        500: OpenApiTypes.OBJECT}
-)
 class UpdateOrderView(GenericAPIView):
     permission_classes = [AllowAny]
-    serializer_class = OrderSerializer
 
     def post(self, request):
         """
