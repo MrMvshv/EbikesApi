@@ -10,9 +10,11 @@ The API documentation is available on the `/docs` endpoint
 
 Ebikes Api
 
-    - EBApi (contains routing configs for EBA fleetbase inter-ops)
+    - EBApi (contains routing configs for EBA ops db)
         - urls.py
         - views.py
+        - models.py
+        - serializers.py
     - EBARestAPIServer (contains overall server configs and root route switching)
         - asgi.py
         - settings.py
@@ -42,11 +44,18 @@ After cloning, run
 
 Deployed heroku endpoint: https://ebikesbackend-593c3249d102.herokuapp.com/
 
+- ** not in service **
 Paths:
 
     /       -> root route status, returns 200 ok
 
     /time   -> returns current server time
+
+    /orders/pending -> returns all pending orders in db as a list
+
+    /{orders | rider | user | location} -> { POST (create) | PUT (update) | DELETE () | GET (retrieve) } the specified item from db
+
+    /{item}/id -> retrieve details of the *item*
 
 <h4> gmapi endpoints </h4>
 
