@@ -45,6 +45,8 @@ After cloning, run
 Deployed heroku endpoint: https://ebikesbackend-593c3249d102.herokuapp.com/
 
 - ** not in service **
+
+
 Paths:
 
     /       -> root route status, returns 200 ok
