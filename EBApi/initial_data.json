@@ -1,0 +1,63 @@
+[
+    {
+        "model": "EBApi.distancerecord",
+        "pk": 1,
+        "fields": {
+            "origin_lat": -1.3433182103402546,
+            "origin_long": 36.6600758309724,
+            "destination_lat": 1.3913519108241854,
+            "destination_long": 36.76051708309745,
+            "distance": 14.969
+        }
+    },
+    {
+        "model": "EBApi.rider",
+        "pk": 1,
+        "fields": {
+            "name": "Test Rider",
+            "phone_number": "0777123456",
+            "email": "test.rider@ebikesafrica.co.ke",
+            "vehicle_details": "Ebike"
+        }
+    },
+    {
+        "model": "EBApi.user",
+        "pk": 1,
+        "fields": {
+            "name": "Requester",
+            "phone_number": "0777654321",
+            "email": "re@quest.com"
+        }
+    },
+    {
+        "model": "EBApi.location",
+        "pk": 1,
+        "fields": {
+            "latitude": -1.3433182103402546,
+            "longitude": 36.6600758309724,
+            "address": "Ngong Rd"
+        }
+    },
+    {
+        "model": "EBApi.location",
+        "pk": 2,
+        "fields": {
+            "latitude": 1.3913519108241854,
+            "longitude": 36.76051708309745,
+            "address": "Loibashae"
+        }
+    },
+    {
+        "model": "EBApi.order",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "rider": 1,
+            "pick_up_location": 1,
+            "drop_off_location": 2,
+            "status": "pending",
+            "created_at": "2024-07-18T12:00:00Z",
+            "updated_at": "2024-07-18T12:00:00Z"
+        }
+    }
+]

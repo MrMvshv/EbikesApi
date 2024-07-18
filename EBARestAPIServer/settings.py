@@ -48,18 +48,35 @@ INSTALLED_APPS = [
      'rest_framework_docs',
      'drf_yasg2',
     'corsheaders',
-    "drf_spectacular"
+    "drf_spectacular",
+    'EBApi',
 ]
+
+#db
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'EBA_backend_db',
+        'USER': 'eba',
+        'PASSWORD': 'ebikesafrica',
+        'HOST': 'localhost',  # Set to empty string for localhost.
+        'PORT': '3306',  # Set to empty string for default.
+    }
+}
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    #"django.middleware.csrf.CsrfViewMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = "EBARestAPIServer.urls"
 
