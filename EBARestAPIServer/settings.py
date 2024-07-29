@@ -53,7 +53,7 @@ INSTALLED_APPS = [
 ]
 
 #db
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -75,7 +75,7 @@ DATABASES = {
         'PORT': '3306',  # Set to empty string for default.
     }
 }
-
+"""
 
 
 MIDDLEWARE = [
