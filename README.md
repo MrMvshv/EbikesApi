@@ -49,8 +49,7 @@ Deployed heroku endpoint: https://ebikesbackend-593c3249d102.herokuapp.com/
 
 Paths:
 
-    /       -> root route status, returns 200 ok
-
+    /       -> root route status, returns 200 
     /time   -> returns current server time
 
     /orders/pending -> returns all pending orders in db as a list

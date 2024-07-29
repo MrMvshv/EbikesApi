@@ -53,6 +53,18 @@ INSTALLED_APPS = [
 ]
 
 #db
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ebikesbackend',
+        'USER': 'root',
+        'PASSWORD': 'ebabackenddb',
+        'HOST': '/cloudsql/backend-430606:us-central1:ebikesbackend',  # Set to empty string for localhost.
+        'PORT': '3306',  # Set to empty string for default.
+    }
+}
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -63,6 +75,7 @@ DATABASES = {
         'PORT': '3306',  # Set to empty string for default.
     }
 }
+
 
 
 MIDDLEWARE = [
