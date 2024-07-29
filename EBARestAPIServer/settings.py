@@ -14,6 +14,10 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+# settings.py
+import sys
+print("Current settings file:", sys.argv)
+
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
@@ -30,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-*xm3t@6%j9)%wbfe4s)*9qxe-)auivow$*8h8p&9c2(=4gy5r7"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -53,14 +57,14 @@ INSTALLED_APPS = [
 ]
 
 #db
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ebikesbackend',
+        'NAME': 'EBA_backend_db',
         'USER': 'root',
         'PASSWORD': 'ebabackenddb',
-        'HOST': '/cloudsql/backend-430606:us-central1:ebikesbackend',  # Set to empty string for localhost.
+        'HOST': '127.0.1',  # Set to empty string for localhost.
         'PORT': '3306',  # Set to empty string for default.
     }
 }
@@ -69,15 +73,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'EBA_backend_db',
-        'USER': 'eba',
-        'PASSWORD': 'ebikesafrica',
-        'HOST': 'localhost',  # Set to empty string for localhost.
+        'USER': 'root',
+        'PASSWORD': 'ebabackenddb',
+        'HOST': '/cloudsql/backend-430606:us-central1:ebikesbackend',  # Set to empty string for localhost.
         'PORT': '3306',  # Set to empty string for default.
     }
 }
-"""
 
-
+print("DATABASES CONFIGURATION:", DATABASES)
+print("Database ENGINE:", DATABASES['default']['ENGINE'])
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -115,12 +119,6 @@ WSGI_APPLICATION = "EBARestAPIServer.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 
 # Password validation

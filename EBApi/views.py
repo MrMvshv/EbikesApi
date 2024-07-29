@@ -12,6 +12,12 @@ def current_time(request):
     current_time = datetime.now().strftime("%H:%M:%S")
     return JsonResponse({'message': f'Hey, the current time is {current_time}'})
 
+def test_db_connection(request):
+    try:
+        data = list(Order.objects.all().values())
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 # class based views for Django to handle CRUD using rest_framework
 class OrderListCreate(generics.ListCreateAPIView):

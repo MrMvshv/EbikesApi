@@ -8,6 +8,7 @@ class DistanceRecord(models.Model):
     origin_long = models.FloatField()
     destination_lat = models.FloatField()
     destination_long = models.FloatField()
+    name = models.CharField(max_length=15)
     distance = models.FloatField()
     price = models.FloatField(default=0)
 

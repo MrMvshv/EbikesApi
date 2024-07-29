@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.status_ok, name='status-ok'),
     path('time/', views.current_time, name='current-time'),
+    path('test-db/', views.test_db_connection, name='test-db'),
     path('orders/pending/', views.list_pending_orders, name='list-pending-orders'),
     path('orders/', views.OrderListCreate.as_view(), name='order-list-create'),
     path('orders/<int:pk>/', views.OrderDetail.as_view(), name='order-detail'),

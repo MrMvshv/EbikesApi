@@ -1,2 +1,7 @@
 runtime: python310
 service: default
+
+
+
+beta_settings:
+  cloud_sql_instances: "backend-430606:us-central1:ebikesbackend"
