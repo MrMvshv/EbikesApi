@@ -103,3 +103,7 @@ http://127.0.0.1:8000/google_api/calculate-distance/
 For example, to calculate the distance and delivery price between Point A and Point B:
 
 {"origin_lat": -1.3433182103402546,"origin_long": 36.6600758309724,"destination_lat": -1.3913519108241854,"destination_long": 36.76051708309745}
+
+
+**Final Todos
+Security: put the front end url in allowed cors origins (EBARestapiserver/settings.py)

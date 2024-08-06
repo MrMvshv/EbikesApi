@@ -3,6 +3,8 @@ from datetime import datetime
 from rest_framework import generics
 from .models import Order, Location, Rider, User
 from .serializers import OrderSerializer, LocationSerializer, UserSerializer, RiderSerializer
+from .utils import lipa_na_mpesa_online
+import json
 
 
 def status_ok(request):
@@ -51,6 +53,47 @@ class RiderListCreate(generics.ListCreateAPIView):
 class RiderDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rider.objects.all()
     serializer_class = RiderSerializer
+
+
+# Mpesa stk push
+def MpesaPaybill(request):
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    
+    print(data)
+    phone_number = data.get('phone_number')
+    print(phone_number)
+    amount = data.get('amount')
+    account_reference = data.get('account_reference')
+    transaction_desc = data.get('transaction_desc')
+    
+    if not phone_number:
+        return JsonResponse({'error': 'Phone number is required'}, status=400)
+    if not amount:
+        return JsonResponse({'error': 'Amount is required'}, status=400)
+    if not account_reference:
+        return JsonResponse({'error': 'Account reference is required'}, status=400)
+    if not transaction_desc:
+        return JsonResponse({'error': 'Transaction description is required'}, status=400)
+    
+    try:
+        response = lipa_na_mpesa_online(phone_number, amount, account_reference, transaction_desc)
+    except requests.exceptions.RequestException as e:
+        # Handle the exception (e.g., log the error, return a custom error message)
+        return JsonResponse({'error': str(e)}, status=400)
+    
+    print(f'response: {response}')
+    return JsonResponse(response)
+
+def MpesaPaybillResponse(request):
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    print(data)  # Process the data as needed
+    return JsonResponse({'status': 'success response from daraja'})
 
 # methods for retrieving specific data
 def list_pending_orders(request):

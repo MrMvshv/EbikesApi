@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 import os
 # settings.py
 import sys
-print("Current settings file:", sys.argv)
+
 
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
@@ -56,6 +56,13 @@ INSTALLED_APPS = [
     'EBApi',
 ]
 
+#mpesa settings
+MPESA_CONSUMER_KEY = 'jBg3xgGChHhup9uZwtLWOLcQ4IiEKGDBSFj9y0C8k8p9nOmr'
+MPESA_CONSUMER_SECRET = 'ZaSNcqF1cXCNFADA6f3XsWZrOwVpM1rjY44AlZK6MtArAfUPaIdsDD1YjxgwZlgI'
+MPESA_SHORTCODE = '174379'
+MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+MPESA_CALLBACK_URL = 'https://bug-free-fishstick-rqw4qvvv5j5f66v-8000.app.github.dev/res/mpesa'
+
 #db
 """
 DATABASES = {
@@ -80,20 +87,23 @@ DATABASES = {
     }
 }
 
-print("DATABASES CONFIGURATION:", DATABASES)
-print("Database ENGINE:", DATABASES['default']['ENGINE'])
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     #"django.middleware.csrf.CsrfViewMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+# Alternatively, specify allowed origins (comment out the above line if using this)
+# CORS_ALLOWED_ORIGINS = [
+#     "https://stunning-winner-wpxrpjjjj9xh9qr7-5173.app.github.dev",
+# ]
 
 ROOT_URLCONF = "EBARestAPIServer.urls"
 
@@ -169,7 +179,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "title":"Your API Title",
+    "title":"Ebikes Backend Api",
     #   "default_version":'v1',
     #   "description":"Your API description",
     #   "terms_of_service":"https://www.example.com/policies/terms/",

@@ -14,4 +14,7 @@ urlpatterns = [
     path('rider/<int:pk>/', views.RiderDetail.as_view(), name='rider-detail'),
     path('user/', views.UserListCreate.as_view(), name='user-list-create'),
     path('user/<int:pk>/', views.UserDetail.as_view(), name='user-detail'),
+
+    path('pay/mpesa', views.MpesaPaybill, name='MpesaPaybill'),
+    path('res/mpesa', views.MpesaPaybillResponse, name='MpesaPaybillResponse'),
 ]
