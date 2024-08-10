@@ -17,4 +17,8 @@ urlpatterns = [
 
     path('pay/mpesa', views.MpesaPaybill, name='MpesaPaybill'),
     path('res/mpesa', views.MpesaPaybillResponse, name='MpesaPaybillResponse'),
+
+    path('location/search/', views.LocationListSearch, name='location-list-search'),
+    path('user/add/', views.AddUser, name='add-user'),
+
 ]

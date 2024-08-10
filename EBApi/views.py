@@ -116,3 +116,48 @@ def list_pending_orders(request):
     ]
 
     return JsonResponse(orders_data, safe=False)
+
+def LocationListSearch(request):
+    if request.method == 'POST':
+        # Parse the request json data
+        data = json.loads(request.body.decode('utf-8'))
+        
+        # Extract relevant fields from request data
+        field_value = data.get('place')  # Replace 'field_name' with the actual field you're filtering by
+        
+        # Filter the database
+        try:
+            obj = Location.objects.get(address=field_value)
+            return JsonResponse({'status': 'OK', 'id': obj.id})
+        except:
+            return JsonResponse({'status': 'Not Found'}, status=404)
+    return JsonResponse({'status': 'Invalid Request Method'}, status=405)
+
+def AddUser(request):
+    if request.method == 'POST':
+        try:
+            # Parse the incoming JSON data
+            data = json.loads(request.body.decode('utf-8'))
+            # Log the data (console log)
+            print("Received data from Clerk system:", data)
+            # Extract the email address from the webhook data
+            email_address = data['data']['email_addresses'][0]['email_address']
+            print(email_address)
+            # Check if the user already exists
+            if not User.objects.filter(email=email_address).exists():
+                # Create a new user
+                user = User.objects.create(
+                    name=email_address.split('@')[0],  # use part of the email as the username
+                    email=email_address,
+                )
+
+                return JsonResponse({'status': 'User created', 'user_id': user.id}, status=201)
+            else:
+                return JsonResponse({'status': 'User already exists'}, status=200)
+
+        except (KeyError, json.JSONDecodeError):
+            return JsonResponse({'status': 'Invalid data'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'Error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'Invalid request method'}, status=405)
