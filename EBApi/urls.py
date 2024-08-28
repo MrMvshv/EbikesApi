@@ -21,4 +21,8 @@ urlpatterns = [
     path('location/search/', views.LocationListSearch, name='location-list-search'),
     path('user/add/', views.AddUser, name='add-user'),
 
+    path('orders/user/<int:user_id>/', views.OrdersByUserView.as_view(), name='orders-by-user-cbv'),
+    path('orders/rider/<int:rider_id>/', views.OrdersByRiderView.as_view(), name='orders-by-rider-cbv'),
+
+    path('rider/find-by-phone/', views.find_rider_by_phone, name='find-rider-by-phone'),
 ]

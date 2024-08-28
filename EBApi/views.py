@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from datetime import datetime
 from rest_framework import generics
 from .models import Order, Location, Rider, User
@@ -30,6 +31,23 @@ class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
+#get order by user or rider
+class OrdersByUserView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(User, id=user_id)
+        return Order.objects.filter(user=user)
+
+class OrdersByRiderView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        rider_id = self.kwargs['rider_id']
+        rider = get_object_or_404(Rider, id=rider_id)
+        return Order.objects.filter(rider=rider)
+
 class LocationListCreate(generics.ListCreateAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
@@ -54,6 +72,21 @@ class RiderDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rider.objects.all()
     serializer_class = RiderSerializer
 
+#query riders by phone number
+def find_rider_by_phone(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        phone_number = data.get('phone_number')
+        
+        if not phone_number:
+            return JsonResponse({'status': 'error', 'message': 'Phone number is required'}, status=400)
+        
+        try:
+            rider = Rider.objects.get(phone_number=phone_number)
+            return JsonResponse({'status': 'exists', 'rider_id': rider.id})
+        except Rider.DoesNotExist:
+            return JsonResponse({'status': 'not_found'}, status=404)
+    return JsonResponse({'status': 'invalid_method'}, status=405)
 
 # Mpesa stk push
 def MpesaPaybill(request):
