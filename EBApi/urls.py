@@ -25,4 +25,5 @@ urlpatterns = [
     path('orders/rider/<int:rider_id>/', views.OrdersByRiderView.as_view(), name='orders-by-rider-cbv'),
 
     path('rider/find-by-phone/', views.find_rider_by_phone, name='find-rider-by-phone'),
+    path('user/find-by-email/', views.find_user_by_email, name='find-user-by-email'),
 ]

@@ -88,6 +88,22 @@ def find_rider_by_phone(request):
             return JsonResponse({'status': 'not_found'}, status=404)
     return JsonResponse({'status': 'invalid_method'}, status=405)
 
+# Query user by email
+def find_user_by_email(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        
+        if not email:
+            return JsonResponse({'status': 'error', 'message': 'Email is required'}, status=400)
+        
+        try:
+            user = User.objects.get(email=email)
+            return JsonResponse({'status': 'exists', 'user_id': user.id})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'not_found'}, status=404)
+    return JsonResponse({'status': 'invalid_method'}, status=405)
+
 # Mpesa stk push
 def MpesaPaybill(request):
     try:
