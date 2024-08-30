@@ -21,9 +21,22 @@ def lipa_na_mpesa_online(phone_number, amount, account_reference, transaction_de
     passkey = settings.MPESA_PASSKEY
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     password = base64.b64encode(shortcode.encode() + passkey.encode() + timestamp.encode()).decode('utf-8')
-    phone_number = ''.join(filter(str.isdigit, phone_number))
     amount = ''.join(filter(str.isdigit, amount))
-    
+
+    # Normalize the phone number to the format +254712345678
+    phone_number = ''.join(filter(str.isdigit, phone_number))  # Remove non-digit characters
+# Normalize the phone number to the format +254712345678
+    phone_number = ''.join(filter(str.isdigit, phone_number))  # Remove non-digit characters
+    if phone_number.startswith('0'):
+        phone_number = '254' + phone_number[1:]
+    elif phone_number.startswith('254'):
+        phone_number = '254' + phone_number[3:]
+    elif phone_number.startswith('254'):
+        # Already in the correct format
+        pass
+    else:
+        raise ValueError('Invalid phone number format')    
+    print(f"phone:{phone_number}:")
     payload = {
         "BusinessShortCode": shortcode,
         "Password": password,

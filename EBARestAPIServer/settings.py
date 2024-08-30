@@ -61,7 +61,7 @@ MPESA_CONSUMER_KEY = 'jBg3xgGChHhup9uZwtLWOLcQ4IiEKGDBSFj9y0C8k8p9nOmr'
 MPESA_CONSUMER_SECRET = 'ZaSNcqF1cXCNFADA6f3XsWZrOwVpM1rjY44AlZK6MtArAfUPaIdsDD1YjxgwZlgI'
 MPESA_SHORTCODE = '174379'
 MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
-MPESA_CALLBACK_URL = 'https://bug-free-fishstick-rqw4qvvv5j5f66v-8000.app.github.dev/res/mpesa'
+MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 
 #db
 """
