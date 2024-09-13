@@ -9,6 +9,7 @@ from .utils import lipa_na_mpesa_online
 import json
 
 from .chat import handle_client_conversation, handle_rider_conversation
+from .chat_functions import check_rider
 
 def status_ok(request):
     return JsonResponse({'status': 'ok'})
@@ -23,13 +24,16 @@ def webhook(request):
             message_text = form_data.get("Body")
             sender_id = form_data.get("From")
 
-            if sender_id == 'whatsapp:+254759694831':
-                handle_client_conversation(sender_id, message_text)
-            else:
+
+            if check_rider(sender_id):
                 handle_rider_conversation(sender_id, message_text)      
+            else:
+                handle_client_conversation(sender_id, message_text)
+
+            return JsonResponse({'status': 'success'})
         except Exception as e:
             print(f"Error processing the webhook: {e}")
-
+            return JsonResponse({'status': 'error'})
 
 def current_time(request):
     current_time = datetime.now().strftime("%H:%M:%S")
