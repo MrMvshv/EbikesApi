@@ -8,9 +8,28 @@ from .serializers import OrderSerializer, LocationSerializer, UserSerializer, Ri
 from .utils import lipa_na_mpesa_online
 import json
 
+from .chat import handle_client_conversation, handle_rider_conversation
 
 def status_ok(request):
     return JsonResponse({'status': 'ok'})
+
+def webhook(request):
+    if request.method == 'POST':
+        try:
+            form_data = request.POST
+            # form_data = json.loads(request.body)        # Log the incoming message
+            print("Received webhook data")
+            # Extract relevant information (e.g., sender, message content)
+            message_text = form_data.get("Body")
+            sender_id = form_data.get("From")
+
+            if sender_id == 'whatsapp:+254759694831':
+                handle_client_conversation(sender_id, message_text)
+            else:
+                handle_rider_conversation(sender_id, message_text)      
+        except Exception as e:
+            print(f"Error processing the webhook: {e}")
+
 
 def current_time(request):
     current_time = datetime.now().strftime("%H:%M:%S")
