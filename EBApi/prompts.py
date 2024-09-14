@@ -213,7 +213,9 @@ RIDERS_ACCEPTANCE_PROMPT = """
     - If the phone number is not included in the announcement, return an empty string (" ").
     - Return 'Yes' if the rider's response confirms their acceptance (e.g., "I will take it", "I accept", "I'll handle it").
     - Return 'No' if the rider declines, provides an unrelated response, or doesn't confirm acceptance.
-    - Ensure that the decision is based on both the rider's input and the content of the announcement.
+    - Make sure the decision is based on the rider's most recent input regarding acceptance, and use the content of the announcement to retrieve the phone number.
+    - If the most recent input from the rider does not exist yet, return 'No' for acceptance.
+
 
     ### Example 1:
     - **Announcement**: "New delivery request for client 0712345678. Please confirm if you can take it."
@@ -230,6 +232,12 @@ RIDERS_ACCEPTANCE_PROMPT = """
     ### Example 3 (Decline):
     - **Announcement**: "New delivery request for client 0712345678. Please confirm if you can take it."
     - **Input Text**: "Sorry, I'm unavailable."
+
+    - **Result**: Acceptance is 'No', and the phone number is 0712345678.
+
+    ### Example 4 (Decline):
+    - **Announcement**: "Delivery request from client +254700123456 for a pickup at Yaya Centre. Is anyone available to take this?"
+    - **Input Text**: "I can't make it today."
 
     - **Result**: Acceptance is 'No', and the phone number is 0712345678.
 

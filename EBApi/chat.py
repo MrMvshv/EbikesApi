@@ -1,10 +1,6 @@
-from twilio.twiml.messaging_response import MessagingResponse
-from langchain.memory import ConversationBufferMemory
-from langchain_openai import ChatOpenAI
+from langchain.memory.buffer_window import ConversationBufferWindowMemory
 from dotenv import load_dotenv
-from .twilio import send_message_to_client, send_message_to_rider, logger
-import json
-import os
+from .twilio import send_message_to_client, send_message_to_rider
 
 load_dotenv()
 
@@ -28,12 +24,12 @@ previous_delivery_requests = {}
 
 def get_client_memory(session_id: str):
     if session_id not in client_memories:
-        client_memories[session_id] = ConversationBufferMemory(return_messages=True)
+        client_memories[session_id] = ConversationBufferWindowMemory(return_messages=True, k=8)
     return client_memories[session_id]
 
 def get_rider_memory(session_id: str):
     if session_id not in rider_memories:
-        rider_memories[session_id] = ConversationBufferMemory(return_messages=True)
+        rider_memories[session_id] = ConversationBufferWindowMemory(return_messages=True, k=8)
     return rider_memories[session_id]
     
 
@@ -67,8 +63,6 @@ def handle_rider_conversation(sender_id, message):
     # Check if rider accepts delivery
     delivery_acceptance = riders_acceptance_chain.invoke({"input": message, 'announcement': response})
     
-    print(delivery_acceptance)
-
     # Send message to client to rider accepts request
     if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
         message = f"Notify the client that the delivery has been accepted and the rider can be contacted at {sender_id}"
@@ -114,11 +108,10 @@ def handle_client_conversation(sender_id, message):
     has_locations_changed(delivery_request, previous_request):
         message = (
             f"Order assigned by {delivery_request['phone_number']}. For new order, client has a delivery from {delivery_request['pickup_location']} to {delivery_request['dropoff_location']}." 
-            f"For updates, pickup location changed to {delivery_request['pickup_location']} or dropoff location changed to {delivery_request['dropoff_location']}"
+            f"For updates, pickup location changed to {delivery_request['pickup_location']} or dropoff location changed to {delivery_request['dropoff_location']}."
+            f"Avoid using courteous phrases like 'Thank you for reaching out'; just focus on providing the necessary information to the riders."
         )
 
-        print(f"Delivery request: {delivery_request}")
-        print(f"Previous request: {previous_request}")
         handle_rider_conversation('whatsapp:+254747694839', message)
 
         # Update the previous delivery request to the current one
