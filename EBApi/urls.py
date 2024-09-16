@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.status_ok, name='status-ok'),
+    path('webhook/', views.webhook, name='webhook'),
     path('time/', views.current_time, name='current-time'),
     path('test-db/', views.test_db_connection, name='test-db'),
     path('orders/pending/', views.list_pending_orders, name='list-pending-orders'),
