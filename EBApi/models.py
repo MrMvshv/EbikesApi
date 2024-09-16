@@ -43,7 +43,9 @@ class Location(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
         ('active', 'Active'),
+        ('delivered', 'Delivered'),
         ('completed', 'Completed'),
     ]
 
