@@ -27,7 +27,7 @@ def webhook(request):
 
             if check_rider(sender_id):
                 print(f'found rider, {sender_id}')
-                handle_rider_conversation(f"whatsapp:{sender_id}", message_text)      
+                handle_rider_conversation(f"{sender_id}", message_text)      
             else:
                 print(f'found user, {sender_id}')
                 handle_client_conversation(sender_id, message_text)

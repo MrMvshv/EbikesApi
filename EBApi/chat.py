@@ -59,13 +59,15 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     
     # Store the conversation in the rider's memory
     rider_memory.save_context({"input": message}, {"output": response})
-    
+    print('\n', sender_id, '\n')
     # Send the notification to the rider
     send_message_to_rider(sender_id, response)
+    print(f"\n{sender_id}\n")
 
     # Check if rider accepts delivery
     delivery_acceptance = riders_acceptance_chain.invoke({"input": message, 'announcement': response})
     
+    print('\n', delivery_acceptance, '\n')
     # Send message to client to rider accepts request
     if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
         message = f"Notify the client that the delivery has been accepted and the rider can be contacted at {sender_id}"
