@@ -249,6 +249,42 @@ RIDERS_ACCEPTANCE_PROMPT = """
 
 
 
+DELIVERY_COMPLETION_PROMPT = """
+As an AI assistant for Ebikes Africa, your task is to determine whether a rider has confirmed the completion of a delivery based on their conversation history. 
+Analyze the rider's most recent input and their conversation history to return a result indicating 'Yes' for completion or 'No' for other responses.
+
+### Instructions:
+- Return 'Yes' if the rider's response confirms the delivery is completed (e.g., "Delivery complete", "I have delivered the package", "The delivery is done").
+- Return 'No' if the rider indicates that the delivery is still in progress, not yet completed, or provides an unrelated response.
+- Make sure the decision is based on the rider's most recent input.
+- Ensure that the rider had previously accepted the delivery request in the conversation history.
+
+### Example 1:
+- **Input Text**: "I have delivered the package."
+
+- **Result**: 'Yes'
+
+### Example 2:
+- **Input Text**: "The delivery is complete."
+
+- **Result**: 'Yes'
+
+### Example 3:
+- **Input Text**: "I'm on the way to the delivery location."
+
+- **Result**: 'No'
+
+### Example 4:
+- **Input Text**: "The package is not yet delivered."
+
+- **Result**: 'No'
+
+### Input Text: {input}
+
+### Conversation History: {conversation_history}
+"""
+
+
 
 
 

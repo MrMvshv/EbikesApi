@@ -18,9 +18,9 @@ def update_order_status(order_id, new_status):
     try:
         # Retrieve the order by its ID
         order = Order.objects.get(id=order_id)
-        
         # Update the status field if the new status is valid
         if new_status in dict(Order.STATUS_CHOICES):
+            print(f'\nOrder Status 2: {order.status}\n')
             order.status = new_status
             order.save()  # Save the updated order to the database
             return order
@@ -52,7 +52,9 @@ def check_rider(sender_id):
     # checks rider phone number in db
     print('\n', sender_id, '\n')
 
-
+    if sender_id == 'whatsapp:+4915172181250':
+        # return Rider.objects.filter(phone_number=sender_id).exists()
+        return True
     # Check if the phone number is in the format +254XXXXXXXXX
     if sender_id.startswith("whatsapp:+254"):
         # Convert to the format 0XXXXXXXXX
