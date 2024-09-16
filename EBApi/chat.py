@@ -10,8 +10,8 @@ from .gpt_model import model
 
 # Import your LangChain chains
 from .client_request import client_chain, location_chain
-from .rider_request import riders_chain, riders_acceptance_chain
-from .chat_functions import post_order_from_chat
+from .rider_request import riders_chain, riders_acceptance_chain, delivery_completion_chain
+from .chat_functions import post_order_from_chat, update_order_status
 
 
 # Dictionary to store ConversationBufferMemory for each user
@@ -37,6 +37,7 @@ def get_rider_memory(session_id: str):
 # Function to send rider notifications and handle follow-ups
 def handle_rider_conversation(sender_id, message, order_id=0):
     # Get or create memory for the rider
+    print(f'\n Order Id: {order_id} \n')
     rider_memory = get_rider_memory(sender_id)
     # Retrieve conversation history
     memory_data = rider_memory.load_memory_variables({})
@@ -72,7 +73,13 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
         message = f"Notify the client that the delivery has been accepted and the rider can be contacted at {sender_id}"
         handle_client_conversation(f"whatsapp:{delivery_acceptance['phone_number']}", message)
+        update_order_status(order_id, 'active')
     
+    delivery_completed = delivery_completion_chain.invoke(riders_input)
+    print('\nDelivery Completed: ', delivery_completed, '\n')
+    if delivery_completed == 'Yes':
+        update_order_status(order_id, 'completed')
+
 
 # Function to send client notifications and handle follow-ups
 def handle_client_conversation(sender_id, message):
@@ -124,7 +131,8 @@ def handle_client_conversation(sender_id, message):
         print(f"\nPrevious request: {previous_request}\n")
 
         order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'])
-        handle_rider_conversation('whatsapp:+254701638574', message, order_id)
+        print(f'\n Order Id 2: {order_id} \n')
+        handle_rider_conversation('whatsapp:+4915172181250', message, order_id)
 
         # Update the previous delivery request to the current one
         previous_delivery_requests[sender_id] = delivery_request
