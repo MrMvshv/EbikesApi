@@ -1,4 +1,22 @@
 from .models import Rider, Location, Order, User
+from geopy.geocoders import Nominatim
+
+def get_lat_long(location_name):
+    """Get the latitude and longitude from a location name"""
+    
+    # Initialize Nominatim API
+    geolocator = Nominatim(user_agent="geoapiExercises")
+    
+    # Get location
+    location = geolocator.geocode(location_name)
+    
+    # If location found, return latitude and longitude
+    if location:
+        return location.latitude, location.longitude
+    else:
+        return None, None
+
+
 
 def check_rider(sender_id):
     # checks rider phone number in db
@@ -12,9 +30,21 @@ def check_rider(sender_id):
 
 def post_order_from_chat(pickup, dropoff, phone_number, notes):
     """Uploads orders to database from chat"""
+     # Get lat/long for pickup and dropoff locations
+    pickup_lat, pickup_long = get_lat_long(pickup)
+    dropoff_lat, dropoff_long = get_lat_long(dropoff)
+
      # Create the pickup and dropoff locations
-    pickup_location = Location.objects.create(address=pickup)
-    dropoff_location = Location.objects.create(address=dropoff)
+    pickup_location = Location.objects.create(
+        address=pickup, 
+        latitude=pickup_lat, 
+        longitude=pickup_long
+    )
+    dropoff_location = Location.objects.create(
+        address=dropoff, 
+        latitude=dropoff_lat, 
+        longitude=dropoff_long
+    )
     
     # Find or create the user by phone number
     user, created = User.objects.get_or_create(phone_number=phone_number)
@@ -23,8 +53,8 @@ def post_order_from_chat(pickup, dropoff, phone_number, notes):
     order = Order.objects.create(
         pickup_location=pickup_location,
         dropoff_location=dropoff_location,
-        user=user
-        order_notes = notes
+        user=user,
+        order_notes=notes
     )
     print(f'order created : {order}')
     # Return the order ID
