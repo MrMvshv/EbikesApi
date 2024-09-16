@@ -1,4 +1,4 @@
-from langchain.memory.buffer_window import ConversationBufferWindowMemory
+from langchain.memory import ConversationBufferMemory
 from dotenv import load_dotenv
 from .twilio import send_message_to_client, send_message_to_rider
 
@@ -11,6 +11,7 @@ from .gpt_model import model
 # Import your LangChain chains
 from .client_request import client_chain, location_chain
 from .rider_request import riders_chain, riders_acceptance_chain
+from .chat_functions import post_order_from_chat
 
 
 # Dictionary to store ConversationBufferMemory for each user
@@ -24,22 +25,24 @@ previous_delivery_requests = {}
 
 def get_client_memory(session_id: str):
     if session_id not in client_memories:
-        client_memories[session_id] = ConversationBufferWindowMemory(return_messages=True, k=8)
+        client_memories[session_id] = ConversationBufferMemory(return_messages=True)
     return client_memories[session_id]
 
 def get_rider_memory(session_id: str):
     if session_id not in rider_memories:
-        rider_memories[session_id] = ConversationBufferWindowMemory(return_messages=True, k=8)
+        rider_memories[session_id] = ConversationBufferMemory(return_messages=True)
     return rider_memories[session_id]
     
 
 # Function to send rider notifications and handle follow-ups
-def handle_rider_conversation(sender_id, message):
+def handle_rider_conversation(sender_id, message, order_id=0):
     # Get or create memory for the rider
     rider_memory = get_rider_memory(sender_id)
     # Retrieve conversation history
     memory_data = rider_memory.load_memory_variables({})
     chat_history = memory_data.get('history', [])
+
+    print(chat_history)
 
     # Ensure chat_history is a list, even if empty
     if isinstance(chat_history, str):
@@ -81,6 +84,8 @@ def handle_client_conversation(sender_id, message):
     if isinstance(chat_history, str):
         chat_history = []  # Initialize as empty list if it's an empty string
 
+    print(chat_history)
+
     # Format input for the chatbot
     input_data = {
         "input": message,
@@ -110,12 +115,17 @@ def handle_client_conversation(sender_id, message):
             f"Order assigned by {delivery_request['phone_number']}. For new order, client has a delivery from {delivery_request['pickup_location']} to {delivery_request['dropoff_location']}." 
             f"For updates, pickup location changed to {delivery_request['pickup_location']} or dropoff location changed to {delivery_request['dropoff_location']}."
             f"Avoid using courteous phrases like 'Thank you for reaching out'; just focus on providing the necessary information to the riders."
-        )
+        )   
 
-        handle_rider_conversation('whatsapp:+254747694839', message)
+        print(f"\nDelivery request: {delivery_request}\n")
+        print(f"\nPrevious request: {previous_request}\n")
+
+        order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id)
+        handle_rider_conversation('whatsapp:+254701638574', message, order_id)
 
         # Update the previous delivery request to the current one
         previous_delivery_requests[sender_id] = delivery_request
+
 
 
 # Function to check if the pickup or dropoff locations have changed

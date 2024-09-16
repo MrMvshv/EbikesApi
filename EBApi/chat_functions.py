@@ -10,9 +10,9 @@ def check_rider(sender_id):
     return Rider.objects.filter(phone_number=sender_id).exists()
 
 
-def post_order_from_chat(order):
+def post_order_from_chat(pickup, dropoff, phone_number):
     """Uploads orders to database from chat"""
-    return False
+    return 1
 
 
 def get_order_from_db():
