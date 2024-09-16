@@ -104,6 +104,7 @@ def handle_client_conversation(sender_id, message):
     # Get delivery request (pickup and dropoff locations)
     delivery_request = location_chain.invoke(chat_history)
     delivery_request['phone_number'] = sender_id
+    delivery_request['Notes'] = message
 
     # Retrieve the previous delivery request if available, else initialize with empty values
     previous_request = previous_delivery_requests.get(sender_id, {'pickup_location': 'None', 'dropoff_location': 'None'})
@@ -120,7 +121,7 @@ def handle_client_conversation(sender_id, message):
         print(f"\nDelivery request: {delivery_request}\n")
         print(f"\nPrevious request: {previous_request}\n")
 
-        order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id)
+        order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'])
         handle_rider_conversation('whatsapp:+254701638574', message, order_id)
 
         # Update the previous delivery request to the current one
