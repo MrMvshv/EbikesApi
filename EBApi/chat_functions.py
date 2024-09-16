@@ -4,6 +4,33 @@ from geopy.geocoders import Nominatim
 NAIROBI_CBD_LAT = -1.286389
 NAIROBI_CBD_LONG = 36.817223
 
+def update_order_status(order_id, new_status):
+    """
+    Update the status of an order.
+    
+    Parameters:
+        order_id (int): The ID of the order to update.
+        new_status (str): The new status to set (must be one of the valid choices).
+    
+    Returns:
+        Order: The updated order object, or None if the order does not exist.
+    """
+    try:
+        # Retrieve the order by its ID
+        order = Order.objects.get(id=order_id)
+        
+        # Update the status field if the new status is valid
+        if new_status in dict(Order.STATUS_CHOICES):
+            order.status = new_status
+            order.save()  # Save the updated order to the database
+            return order
+        else:
+            print(f"Invalid status: {new_status}")
+            return None
+    except Order.DoesNotExist:
+        print(f"Order with ID {order_id} does not exist.")
+        return None
+
 def get_lat_long(location_name):
     """Get the latitude and longitude from a location name"""
     
