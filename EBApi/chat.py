@@ -1,4 +1,4 @@
-from langchain.memory import ConversationBufferWindowMemory
+from langchain.memory import ConversationTokenBufferMemory
 from dotenv import load_dotenv
 from .twilio import send_message_to_client, send_message_to_rider
 
@@ -25,12 +25,12 @@ previous_delivery_requests = {}
 
 def get_client_memory(session_id: str):
     if session_id not in client_memories:
-        client_memories[session_id] = ConversationBufferWindowMemory(k=5, return_messages=True)
+        client_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
     return client_memories[session_id]
 
 def get_rider_memory(session_id: str):
     if session_id not in rider_memories:
-        rider_memories[session_id] = ConversationBufferWindowMemory(k=5, return_messages=True)
+        rider_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
     return rider_memories[session_id]
     
 
@@ -113,6 +113,8 @@ def handle_client_conversation(sender_id, message):
     # Send the chatbot's response back via WhatsApp
     send_message_to_client(sender_id, response)
 
+    print(f'\n\n Chat History: {chat_history}')
+
     # Get delivery request (pickup and dropoff locations)
     delivery_request = location_chain.invoke(chat_history)
     delivery_request['phone_number'] = sender_id
@@ -121,11 +123,16 @@ def handle_client_conversation(sender_id, message):
     # Retrieve the previous delivery request if available, else initialize with empty values
     previous_request = previous_delivery_requests.get(sender_id, {'pickup_location': 'None', 'dropoff_location': 'None'})
 
+    print(f'\nDelivery Request: {delivery_request}\n')
+    print(f'\nPrevious Request: {previous_request}\n')
+    
     # Check if the pickup and dropoff locations have changed and if both locations are provided
     if (delivery_request['pickup_location'] != "None" and delivery_request['dropoff_location'] != "None") and \
     has_locations_changed(delivery_request, previous_request):
+        order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'])
+
         message = (
-            f"Order assigned by {delivery_request['phone_number']}. For new order, client has a delivery from {delivery_request['pickup_location']} to {delivery_request['dropoff_location']}." 
+            f"Order Id: {order_id} has been assigned by {delivery_request['phone_number']}. For new order, client has a delivery from {delivery_request['pickup_location']} to {delivery_request['dropoff_location']}." 
             f"For updates, pickup location changed to {delivery_request['pickup_location']} or dropoff location changed to {delivery_request['dropoff_location']}."
             f"Avoid using courteous phrases like 'Thank you for reaching out'; just focus on providing the necessary information to the riders."
         )   
@@ -133,7 +140,6 @@ def handle_client_conversation(sender_id, message):
         print(f"\nDelivery request: {delivery_request}\n")
         print(f"\nPrevious request: {previous_request}\n")
 
-        order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'])
         print(f'\n Order Id 2: {order_id} \n')
         handle_rider_conversation('whatsapp:+254701638574', message, order_id)
 

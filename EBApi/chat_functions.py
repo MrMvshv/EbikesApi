@@ -102,7 +102,7 @@ def post_order_from_chat(pickup, dropoff, phone_number, notes):
         order_notes=notes,
         status='Pending'
     )
-    print(f'order created : {order}')
+    print(f'\n\nOrder created : {order}\n\n')
     # Return the order ID
     return order.id
     
