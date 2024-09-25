@@ -210,9 +210,12 @@ You will also extract the client's phone number from this most recent announceme
 ### Instructions:
 - Only consider the most recent announcement made by the bot in the conversation history when evaluating the rider's response.
 - Extract the phone number from the most recent bot announcement if it is the client's number. If the phone number belongs to the bot or system, return an empty string (" ").
-- Return the client's phone_number and the acceptance which should be either "Yes" or "No". If the rider's response confirms acceptance, the acceptance should return "Yes" (e.g., "I will take it", "I accept", "I'll handle it").
-- Return the client's phone number and the acceptance as "No" if the rider declines, provides an unrelated response, or does not confirm acceptance.
+- Track the order ID when it is mentioned in the conversation. If an order ID is added or referenced in the conversation, ensure that it is saved and associated with this delivery.
+- Return the client's phone number and the acceptance, which should be either "Yes" or "No". If the rider's response confirms acceptance, the acceptance should return "Yes" (e.g., "I will take it", "I accept", "I'll handle it").
+- If the rider explicitly states that the delivery request is completed (e.g., "The delivery is done", "I've completed it", "The request is finished"), return "No" for acceptance.
+- Return the client's phone number and the acceptance as "No" if the rider declines, provides an unrelated response, does not confirm acceptance, or says the delivery is completed.
 - Make sure the acceptance decision is based only on the rider's most recent response regarding the current delivery request and not on any prior requests.
+- Include the tracked order ID in the final result if it has been mentioned.
 
 ### Input Text: {input}
 
@@ -220,6 +223,8 @@ You will also extract the client's phone number from this most recent announceme
 
 {format_instructions}
 """
+
+
 
 
 

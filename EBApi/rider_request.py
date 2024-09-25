@@ -34,6 +34,7 @@ def get_riders_acceptance_prompt_template():
     class Acceptance(BaseModel):
         acceptance: str = Field(description="Rider acceptance to delivery request returning 'Yes' or 'No'")
         phone_number: str = Field(description="Client phone number")
+        order_id: str = Field(description='Order Id')
 
     json_parser = JsonOutputParser(pydantic_object=Acceptance)
     format_instructions = json_parser.get_format_instructions()
