@@ -50,3 +50,4 @@ pydantic==2.8.2
 langserve==0.2.2
 twilio==9.2.4
 python-multipart==0.0.9
+geopy==2.4.1
