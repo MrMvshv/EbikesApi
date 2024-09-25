@@ -15,6 +15,7 @@ def update_order_status(order_id, new_status):
     Returns:
         Order: The updated order object, or None if the order does not exist.
     """
+    print(f'\n\nStarting the order, Order Id: {order_id}\n\n')
     try:
         # Retrieve the order by its ID
         order = Order.objects.get(id=order_id)
@@ -52,7 +53,7 @@ def check_rider(sender_id):
     # checks rider phone number in db
     print('\n', sender_id, '\n')
 
-    if sender_id == 'whatsapp:+4915172181250':
+    if sender_id == 'whatsapp:+254701638574':
         # return Rider.objects.filter(phone_number=sender_id).exists()
         return True
     # Check if the phone number is in the format +254XXXXXXXXX

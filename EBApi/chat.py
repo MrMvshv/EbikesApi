@@ -1,4 +1,4 @@
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 from dotenv import load_dotenv
 from .twilio import send_message_to_client, send_message_to_rider
 
@@ -25,12 +25,12 @@ previous_delivery_requests = {}
 
 def get_client_memory(session_id: str):
     if session_id not in client_memories:
-        client_memories[session_id] = ConversationBufferMemory(return_messages=True)
+        client_memories[session_id] = ConversationBufferWindowMemory(k=5, return_messages=True)
     return client_memories[session_id]
 
 def get_rider_memory(session_id: str):
     if session_id not in rider_memories:
-        rider_memories[session_id] = ConversationBufferMemory(return_messages=True)
+        rider_memories[session_id] = ConversationBufferWindowMemory(k=5, return_messages=True)
     return rider_memories[session_id]
     
 
@@ -66,14 +66,17 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     print(f"\n{sender_id}\n")
 
     # Check if rider accepts delivery
-    delivery_acceptance = riders_acceptance_chain.invoke({"input": message, 'announcement': response})
+    delivery_acceptance = riders_acceptance_chain.invoke(riders_input)
     
     print('\n', delivery_acceptance, '\n')
+    print(f'\n Delivery Acceptance: {delivery_acceptance}\n')
     # Send message to client to rider accepts request
     if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
         message = f"Notify the client that the delivery has been accepted and the rider can be contacted at {sender_id}"
         handle_client_conversation(f"whatsapp:{delivery_acceptance['phone_number']}", message)
+        print(f"\n\nDelivery Acceptance, shoulld return Yes or No: {delivery_acceptance['acceptance']}\n\n")
         update_order_status(order_id, 'active')
+        print('\n\nDone\n\n')
     
     delivery_completed = delivery_completion_chain.invoke(riders_input)
     print('\nDelivery Completed: ', delivery_completed, '\n')
@@ -132,7 +135,7 @@ def handle_client_conversation(sender_id, message):
 
         order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'])
         print(f'\n Order Id 2: {order_id} \n')
-        handle_rider_conversation('whatsapp:+4915172181250', message, order_id)
+        handle_rider_conversation('whatsapp:+254701638574', message, order_id)
 
         # Update the previous delivery request to the current one
         previous_delivery_requests[sender_id] = delivery_request

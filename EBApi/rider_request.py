@@ -54,46 +54,27 @@ def create_riders_acceptance_chain():
     return chain
 
 
+def get_delivery_completion_template():
+    """Template for rider delivery completions"""
+    class Completion(BaseModel):
+        completed: str = Field(description="Rider acceptance to delivery request returning 'Yes' or 'No'")
 
-def get_riders_acceptance_prompt_template():
-    """Template for rider accepting delivery request"""
-    class Acceptance(BaseModel):
-        acceptance: str = Field(description="Rider acceptance to delivery request returning 'Yes' or 'No'")
-        phone_number: str = Field(description="Client phone number")
-
-    json_parser = JsonOutputParser(pydantic_object=Acceptance)
+    json_parser = JsonOutputParser(pydantic_object=Completion)
     format_instructions = json_parser.get_format_instructions()
 
     prompt_template = PromptTemplate(
-        template=RIDERS_ACCEPTANCE_PROMPT,
-        input_variables=["input", "announcement"],
+        template=DELIVERY_COMPLETION_PROMPT,
+        input_variables=["input", "conversation_history"],
         partial_variables={"format_instructions": format_instructions}
     )
 
-    return prompt_template, json_parser
-
-
-def create_riders_acceptance_chain():
-    """Define chain for returning yes or no when rider accepts an order"""
-    prompt_template, json_parser = get_riders_acceptance_prompt_template()
-    chain = prompt_template | model | json_parser
-    return chain
-
-
-
-def get_delivery_completion_template():
-    """Template for rider delivery completions"""
-    prompt_template = PromptTemplate(
-        template=DELIVERY_COMPLETION_PROMPT,
-        input_variables=["input", "conversation_history"],
-    )
     return prompt_template
 
 
 def create_delivery_completion_chain():
     """Define chain for delivery completions"""
     prompt_template = get_delivery_completion_template()
-    chain = prompt_template | model | StrOutputParser()
+    chain = prompt_template | model | JsonOutputParser()
     return chain
 
 
