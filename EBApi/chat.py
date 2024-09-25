@@ -1,6 +1,8 @@
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationTokenBufferMemory
 from dotenv import load_dotenv
 from .twilio import send_message_to_client, send_message_to_rider
+from django.db.models import Q
+from .models import Rider, Location, Order, User
 
 load_dotenv()
 
@@ -11,7 +13,7 @@ from .gpt_model import model
 # Import your LangChain chains
 from .client_request import client_chain, location_chain
 from .rider_request import riders_chain, riders_acceptance_chain, delivery_completion_chain
-from .chat_functions import post_order_from_chat, update_order_status
+from .chat_functions import post_order_from_chat, update_order_status, get_rider_by_phone, check_order, get_order_id
 
 
 # Dictionary to store ConversationBufferMemory for each user
@@ -25,12 +27,12 @@ previous_delivery_requests = {}
 
 def get_client_memory(session_id: str):
     if session_id not in client_memories:
-        client_memories[session_id] = ConversationBufferMemory(return_messages=True)
+        client_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
     return client_memories[session_id]
 
 def get_rider_memory(session_id: str):
     if session_id not in rider_memories:
-        rider_memories[session_id] = ConversationBufferMemory(return_messages=True)
+        rider_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
     return rider_memories[session_id]
     
 
@@ -43,7 +45,7 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     memory_data = rider_memory.load_memory_variables({})
     chat_history = memory_data.get('history', [])
 
-    print(chat_history)
+    print(f'\n Chat history: {chat_history}')
 
     # Ensure chat_history is a list, even if empty
     if isinstance(chat_history, str):
@@ -60,82 +62,131 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     
     # Store the conversation in the rider's memory
     rider_memory.save_context({"input": message}, {"output": response})
-    print('\n', sender_id, '\n')
+    #print('\n', sender_id, '\n')
     # Send the notification to the rider
     send_message_to_rider(sender_id, response)
-    print(f"\n{sender_id}\n")
+    #print(f"\n{sender_id}\n")
 
     # Check if rider accepts delivery
-    delivery_acceptance = riders_acceptance_chain.invoke({"input": message, 'announcement': response})
+    delivery_acceptance = riders_acceptance_chain.invoke(riders_input)
+    print(f"\n\nDelivery Acceptance 1 Order Id: {delivery_acceptance['order_id']}\n\n")
     
-    print('\n', delivery_acceptance, '\n')
+    #print('\n', delivery_acceptance, '\n')
+    #print(f'\n Delivery Acceptance: {delivery_acceptance}\n')
+
+    print(f'\n\nOrder ID from Riders side: {order_id}\n\n')
     # Send message to client to rider accepts request
     if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
-        message = f"Notify the client that the delivery has been accepted and the rider can be contacted at {sender_id}"
-        handle_client_conversation(f"whatsapp:{delivery_acceptance['phone_number']}", message)
-        update_order_status(order_id, 'active')
+        if check_order(delivery_acceptance['order_id']):
+            send_message_to_rider(sender_id, 'Order has already been taken')
+        else:
+            message = f"The delivery has been accepted and the rider can be contacted at {sender_id}"
+            handle_client_conversation(f"whatsapp:{delivery_acceptance['phone_number']}", message, "notification")
+            print(f"\n\nDelivery Acceptance, should return Yes or No: {delivery_acceptance['acceptance']}\n\n")
+            print(f'\n\nOrder ID from Riders side on the if statement: {order_id}\n\n')
+
+            rider_id = get_rider_by_phone(sender_id)
+
+            print(f"\n\nDelivery Acceptance 2 Order Id: {delivery_acceptance['order_id']}\n\n")
+
+            update_order_status(delivery_acceptance['order_id'], 'active', rider_id)
+            print('\n\nDone\n\n')
     
     delivery_completed = delivery_completion_chain.invoke(riders_input)
     print('\nDelivery Completed: ', delivery_completed, '\n')
-    if delivery_completed == 'Yes':
-        update_order_status(order_id, 'completed')
+    if delivery_completed['completed'] == 'Yes':
+        rider_id = get_rider_by_phone(sender_id)
+        completed_order_id = get_order_id(sender_id)
+        update_order_status(completed_order_id, 'completed', rider_id)
 
 
 # Function to send client notifications and handle follow-ups
-def handle_client_conversation(sender_id, message):
-    # Get or create ConversationBufferMemory for the sender
-    client_memory = get_client_memory(sender_id)
-    # Retrieve conversation history
-    memory_data = client_memory.load_memory_variables({})
-    chat_history = memory_data.get('history', [])
+def handle_client_conversation(sender_id, message, type):
+    if type == "notification":
+        send_message_to_client(sender_id, message)
+    else:
+        # Get or create ConversationBufferMemory for the sender
+        client_memory = get_client_memory(sender_id)
+        # Retrieve conversation history
+        memory_data = client_memory.load_memory_variables({})
+        chat_history = memory_data.get('history', [])
 
-    # Ensure chat_history is a list, even if empty
-    if isinstance(chat_history, str):
-        chat_history = []  # Initialize as empty list if it's an empty string
+        # Ensure chat_history is a list, even if empty
+        if isinstance(chat_history, str):
+            chat_history = []  # Initialize as empty list if it's an empty string
 
-    print(chat_history)
+        #print(chat_history)
 
-    # Format input for the chatbot
-    input_data = {
-        "input": message,
-        "conversation_history": chat_history
-    }
+        # Format input for the chatbot
+        input_data = {
+            "input": message,
+            "conversation_history": chat_history
+        }
 
-    # Invoke the LangChain chatbot model (remove await if not async)
-    response = client_chain.invoke(input_data)
+        # Invoke the LangChain chatbot model (remove await if not async)
+        response = client_chain.invoke(input_data)
 
-    # Store the new message in memory
-    client_memory.save_context({"input": message}, {"output": response})
+        # Store the new message in memory
+        client_memory.save_context({"input": message}, {"output": response})
 
-    # Send the chatbot's response back via WhatsApp
-    send_message_to_client(sender_id, response)
+        # Send the chatbot's response back via WhatsApp
+        send_message_to_client(sender_id, response)
 
-    # Get delivery request (pickup and dropoff locations)
-    delivery_request = location_chain.invoke(chat_history)
-    delivery_request['phone_number'] = sender_id
-    delivery_request['Notes'] = message
+        print(f'\n\n Chat History: {chat_history}')
 
-    # Retrieve the previous delivery request if available, else initialize with empty values
-    previous_request = previous_delivery_requests.get(sender_id, {'pickup_location': 'None', 'dropoff_location': 'None'})
+        # Get delivery request (pickup and dropoff locations)
+        delivery_request = location_chain.invoke(chat_history)
+        delivery_request['phone_number'] = sender_id
+        delivery_request['Notes'] = message
 
-    # Check if the pickup and dropoff locations have changed and if both locations are provided
-    if (delivery_request['pickup_location'] != "None" and delivery_request['dropoff_location'] != "None") and \
-    has_locations_changed(delivery_request, previous_request):
-        message = (
-            f"Order assigned by {delivery_request['phone_number']}. For new order, client has a delivery from {delivery_request['pickup_location']} to {delivery_request['dropoff_location']}." 
-            f"For updates, pickup location changed to {delivery_request['pickup_location']} or dropoff location changed to {delivery_request['dropoff_location']}."
-            f"Avoid using courteous phrases like 'Thank you for reaching out'; just focus on providing the necessary information to the riders."
-        )   
+        # Retrieve the previous delivery request if available, else initialize with empty values
+        previous_request = previous_delivery_requests.get(sender_id, {'pickup_location': 'None', 'dropoff_location': 'None'})
 
-        print(f"\nDelivery request: {delivery_request}\n")
-        print(f"\nPrevious request: {previous_request}\n")
+        print(f'\nDelivery Request: {delivery_request}\n')
+        print(f'\nPrevious Request: {previous_request}\n')
+        
+        # Check if the pickup and dropoff locations have changed and if both locations are provided
+        if (delivery_request['pickup_location'] != "None" and delivery_request['dropoff_location'] != "None") and \
+        has_locations_changed(delivery_request, previous_request):
+            order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'])
 
-        order_id = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'])
-        print(f'\n Order Id 2: {order_id} \n')
-        handle_rider_conversation('whatsapp:+4915172181250', message, order_id)
+            message = (
+                f"Order Id: {order_id} has been assigned by {delivery_request['phone_number']}. For new order, client has a delivery from {delivery_request['pickup_location']} to {delivery_request['dropoff_location']}." 
+                f"For updates, pickup location changed to {delivery_request['pickup_location']} or dropoff location changed to {delivery_request['dropoff_location']}."
+                f"Avoid using courteous phrases like 'Thank you for reaching out'; just focus on providing the necessary information to the riders."
+            )   
 
-        # Update the previous delivery request to the current one
-        previous_delivery_requests[sender_id] = delivery_request
+            print(f"\nDelivery request: {delivery_request}\n")
+            print(f"\nPrevious request: {previous_request}\n")
+
+            print(f'\n Order Id 2: {order_id} \n')
+            # Get riders who don't have any order with status 'active'
+            riders_without_pending_orders = Rider.objects.exclude(
+                id__in=Order.objects.filter(status='active').values('rider_id')
+            )
+
+            # To get only the IDs of those riders
+            rider_ids = riders_without_pending_orders.values_list('id', flat=True)
+            # Now, get the phone numbers of the riders with these IDs
+            phone_numbers = Rider.objects.filter(id__in=rider_ids).values_list('phone_number', flat=True)
+
+            # Convert the QuerySet to a list, if needed
+            phone_numbers = list(phone_numbers)
+            # Check if the phone numbers list is empty
+            if not phone_numbers:
+                print("No phone numbers to process.")
+                #TO DO: alert dispatch of pending order without rider
+            else:
+                for phone_number in phone_numbers:
+                    # Check if the phone number starts with '0' and convert it to 'whatsapp:+254' format
+                    if phone_number.startswith('0'):
+                        converted_phone_number = 'whatsapp:+254' + phone_number[1:]
+                    else:
+                        # Handle the case where the phone number is already in the correct format
+                        converted_phone_number = phone_number
+
+                    # Call the handle_rider_conversation with the converted phone number
+                    handle_rider_conversation(converted_phone_number, message, order_id)
 
 
 

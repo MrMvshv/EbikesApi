@@ -204,84 +204,45 @@ RIDERS_PROMPT = """
 
 
 RIDERS_ACCEPTANCE_PROMPT = """
-    As an AI assistant for Ebikes Africa, your task is to evaluate whether a rider accepts a delivery request based on the rider's response and the previous announcement made by the bot. 
-    When a rider responds to a delivery notification, analyze their input and the announcement to return a result with 'phone_number' and 'acceptance' fields. 
-    The 'acceptance' field should return 'Yes' if the rider confirms their acceptance (e.g., "I will take it", "I accept", "I'll handle it"), or 'No' if they decline or provide an unrelated response.
+As an AI assistant for Ebikes Africa, your task is to evaluate whether a rider accepts a delivery request based solely on their response to the most recent announcement made by the bot. 
+You will also extract the client's phone number from this most recent announcement if it belongs to the client. Ignore any phone numbers that are not from the client (e.g., bot or system numbers).
 
-    ### Instructions:
-    - Extract the client's phone number from the announcement if available.
-    - If the phone number is not included in the announcement, return an empty string (" ").
-    - Return 'Yes' if the rider's response confirms their acceptance (e.g., "I will take it", "I accept", "I'll handle it").
-    - Return 'No' if the rider declines, provides an unrelated response, or doesn't confirm acceptance.
-    - Make sure the decision is based on the rider's most recent input regarding acceptance, and use the content of the announcement to retrieve the phone number.
-    - If the most recent input from the rider does not exist yet, return 'No' for acceptance.
+### Instructions:
+- Only consider the most recent announcement made by the bot in the conversation history when evaluating the rider's response.
+- Extract the phone number from the most recent bot announcement if it is the client's number. If the phone number belongs to the bot or system, return an empty string (" ").
+- Track the order ID when it is mentioned in the conversation. If an order ID is added or referenced in the conversation, ensure that it is saved and associated with this delivery.
+- Return the client's phone number and the acceptance, which should be either "Yes" or "No". If the rider's response confirms acceptance, the acceptance should return "Yes" (e.g., "I will take it", "I accept", "I'll handle it").
+- If the rider explicitly states that the delivery request is completed (e.g., "The delivery is done", "I've completed it", "The request is finished"), return "No" for acceptance.
+- Return the client's phone number and the acceptance as "No" if the rider declines, provides an unrelated response, does not confirm acceptance, or says the delivery is completed.
+- Make sure the acceptance decision is based only on the rider's most recent response regarding the current delivery request and not on any prior requests.
+- Include the tracked order ID in the final result if it has been mentioned.
 
+### Input Text: {input}
 
-    ### Example 1:
-    - **Announcement**: "New delivery request for client 0712345678. Please confirm if you can take it."
-    - **Input Text**: "I accept the delivery request."
+### Conversation History: {conversation_history}
 
-    - **Result**: Acceptance is 'Yes', and the phone number is 0712345678.
-
-    ### Example 2:
-    - **Announcement**: "New delivery request for client. Please confirm if you can take it."
-    - **Input Text**: "I will handle it."
-
-    - **Result**: Acceptance is 'Yes', and the phone number is ' ' (empty string).
-
-    ### Example 3 (Decline):
-    - **Announcement**: "New delivery request for client 0712345678. Please confirm if you can take it."
-    - **Input Text**: "Sorry, I'm unavailable."
-
-    - **Result**: Acceptance is 'No', and the phone number is 0712345678.
-
-    ### Example 4 (Decline):
-    - **Announcement**: "Delivery request from client +254700123456 for a pickup at Yaya Centre. Is anyone available to take this?"
-    - **Input Text**: "I can't make it today."
-
-    - **Result**: Acceptance is 'No', and the phone number is 0712345678.
-
-    ### Input Text: {input}
-    ### Announcement: {announcement}
-        
-    {format_instructions}
+{format_instructions}
 """
+
+
 
 
 
 DELIVERY_COMPLETION_PROMPT = """
 As an AI assistant for Ebikes Africa, your task is to determine whether a rider has confirmed the completion of a delivery based on their conversation history. 
-Analyze the rider's most recent input and their conversation history to return a result indicating 'Yes' for completion or 'No' for other responses.
+Analyze the rider's most recent input and their conversation history to return a JSON result indicating the status as either "Yes" for completion or "No" for other responses.
 
 ### Instructions:
-- Return 'Yes' if the rider's response confirms the delivery is completed (e.g., "Delivery complete", "I have delivered the package", "The delivery is done").
-- Return 'No' if the rider indicates that the delivery is still in progress, not yet completed, or provides an unrelated response.
-- Make sure the decision is based on the rider's most recent input.
+- Return "Yes" if the rider's response confirms the delivery is completed (e.g., "Delivery complete", "I have delivered the package", "The delivery is done").
+- Return "No" if the rider indicates that the delivery is still in progress, not yet completed, or provides an unrelated response.
+- Ensure the decision is based on the rider's most recent input.
 - Ensure that the rider had previously accepted the delivery request in the conversation history.
-
-### Example 1:
-- **Input Text**: "I have delivered the package."
-
-- **Result**: 'Yes'
-
-### Example 2:
-- **Input Text**: "The delivery is complete."
-
-- **Result**: 'Yes'
-
-### Example 3:
-- **Input Text**: "I'm on the way to the delivery location."
-
-- **Result**: 'No'
-
-### Example 4:
-- **Input Text**: "The package is not yet delivered."
-
-- **Result**: 'No'
 
 ### Input Text: {input}
 
 ### Conversation History: {conversation_history}
+
+{format_instructions}
 """
 
 

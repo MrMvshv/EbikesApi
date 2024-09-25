@@ -20,6 +20,7 @@ def webhook(request):
             form_data = request.POST
             # form_data = json.loads(request.body)        # Log the incoming message
             print("Received webhook data")
+            print(f'\n\nForm Data: {form_data}\n\n')
             # Extract relevant information (e.g., sender, message content)
             message_text = form_data.get("Body")
             sender_id = form_data.get("From")
@@ -30,7 +31,7 @@ def webhook(request):
                 handle_rider_conversation(f"{sender_id}", message_text)      
             else:
                 print(f'found user, {sender_id}')
-                handle_client_conversation(sender_id, message_text)
+                handle_client_conversation(sender_id, message_text, "normal")
 
             return JsonResponse({'status': 'success'})
         except Exception as e:

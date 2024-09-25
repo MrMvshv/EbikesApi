@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def send_message_to_client(to_number, body_text):
     try:
         message = client.messages.create(
-            from_=f"whatsapp:+14155238886",
+            from_=f"whatsapp:+254794837755",
             body=body_text,
             to=f"{to_number}"
             )
@@ -30,7 +30,7 @@ def send_message_to_client(to_number, body_text):
 def send_message_to_rider(to_number, body_text):
     try:
         message = client.messages.create(
-            from_=f"whatsapp:+14155238886",
+            from_=f"whatsapp:+254794837755",
             body=body_text,
             to=f"{to_number}"
         )
