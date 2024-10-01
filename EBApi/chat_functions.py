@@ -55,15 +55,11 @@ def check_rider(sender_id):
     # checks rider phone number in db
     print('\n', sender_id, '\n')
 
-    if sender_id == 'whatsapp:+254701638574':
-        # return Rider.objects.filter(phone_number=sender_id).exists()
-        return True
     # Check if the phone number is in the format +254XXXXXXXXX
     if sender_id.startswith("whatsapp:+254"):
         # Convert to the format 0XXXXXXXXX
         sender_id = "0" + sender_id[13:]
 
-        print(f'\n,Rider Number: {sender_id} \n')
     return Rider.objects.filter(phone_number=sender_id).exists()
 
 
