@@ -1,10 +1,12 @@
 from langchain.memory import ConversationTokenBufferMemory
-from dotenv import load_dotenv
+from langchain.schema import HumanMessage, AIMessage
+import json
+#from dotenv import load_dotenv
 from .twilio import send_message_to_client, send_message_to_rider
 from django.db.models import Q
-from .models import Rider, Location, Order, User
+from .models import Rider, Location, Order, User, ClientMemory, RiderMemory
 
-load_dotenv()
+# load_dotenv()
 
 
 # LLM setup
@@ -16,31 +18,150 @@ from .rider_request import riders_chain, riders_acceptance_chain, delivery_compl
 from .chat_functions import post_order_from_chat, update_order_status, get_rider_by_phone, check_order, get_order_id
 
 
-# Dictionary to store ConversationBufferMemory for each user
-client_memories = {}
-# Dictionary to store ConversationBufferMemory for each rider
-rider_memories = {}
+# # # Dictionary to store ConversationBufferMemory for each user
+# # client_memories = {}
+# # # Dictionary to store ConversationBufferMemory for each rider
+# # rider_memories = {}
 
-# Dictionary to store the previous delivery request for each user
+# # Dictionary to store the previous delivery request for each user
 previous_delivery_requests = {}
 
 
-def get_client_memory(session_id: str):
-    if session_id not in client_memories:
-        client_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
-    return client_memories[session_id]
+# def get_client_memory(session_id: str):
+#     if session_id not in client_memories:
+#         client_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
+#     return client_memories[session_id]
 
-def get_rider_memory(session_id: str):
-    if session_id not in rider_memories:
-        rider_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
-    return rider_memories[session_id]
+# def get_rider_memory(session_id: str):
+#     if session_id not in rider_memories:
+#         rider_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
+#     return rider_memories[session_id]
+
+# Function to convert a message object to a serializable dictionary
+def message_to_dict(message):
+    if isinstance(message, HumanMessage):
+        return {"type": "human", "content": message.content}
+    elif isinstance(message, AIMessage):
+        return {"type": "ai", "content": message.content}
+    else:
+        return {"type": "unknown", "content": str(message)}
+
+# Function to convert a list of message objects to a JSON-compatible format
+def conversation_to_json(conversation_history):
+    return [message_to_dict(message) for message in conversation_history]
+
     
+# Function to get rider memory from MySQL
+def get_rider_memory(rider_id: str):
+    try:
+        # Try to retrieve the memory from the database
+        rider_memory_obj = RiderMemory.objects.get(rider_id=rider_id)
+        conversation_history = json.loads(rider_memory_obj.conversation_history)  # Load the conversation history from JSON
+    except RiderMemory.DoesNotExist:
+        # If no memory is found, initialize an empty memory
+        conversation_history = []
+
+    # Create the memory object for the rider (with loaded conversation)
+    rider_memory = ConversationTokenBufferMemory(
+        max_token_limit=1000,
+        llm=model,
+        return_messages=True,
+    )
+    
+    return rider_memory
+
+# Function to get client memory from MySQL
+def get_client_memory(client_id: str):
+    try:
+        # Try to retrieve the memory from the database
+        client_memory_obj = ClientMemory.objects.get(client_id=client_id)
+        conversation_history = json.loads(client_memory_obj.conversation_history)  # Load the conversation history from JSON
+    except ClientMemory.DoesNotExist:
+        # If no memory is found, initialize an empty memory
+        conversation_history = []
+
+    # Create the memory object for the rider (with loaded conversation)
+    client_memory = ConversationTokenBufferMemory(
+        max_token_limit=1000,
+        llm=model,
+        return_messages=True,
+    )
+    
+    return client_memory
+
+# Function to save or append client memory
+def save_client_memory(client_id: str, conversation_history):
+    print(f"convo history client:, {conversation_history}, {type(conversation_history)}")
+    
+    # Convert new conversation history to a JSON-compatible format
+    new_conversation_history = conversation_to_json(conversation_history)
+    
+    # Check if the memory already exists for the client
+    try:
+        # Get the existing memory from the database
+        client_memory_obj = ClientMemory.objects.get(client_id=client_id)
+        
+        # Load the existing conversation history from JSON
+        existing_history_json = client_memory_obj.conversation_history
+        existing_history = json.loads(existing_history_json) if existing_history_json else []
+        
+        # Append the new conversation history to the existing one
+        updated_conversation_history = existing_history + new_conversation_history
+    except ClientMemory.DoesNotExist:
+        # If no memory exists, start with the new conversation history
+        updated_conversation_history = new_conversation_history
+
+        # Create a new record if none exists
+        client_memory_obj = ClientMemory(client_id=client_id)
+    
+    # Convert the updated conversation history to a JSON string
+    conversation_history_json = json.dumps(updated_conversation_history)
+
+    # Update the object and save it to the database
+    client_memory_obj.conversation_history = conversation_history_json
+    client_memory_obj.save()
+
+# Function to save or append rider memory
+def save_rider_memory(rider_id: str, conversation_history):
+    print(f"convo history rider:, {conversation_history}, {type(conversation_history)}")
+    
+    # Convert new conversation history to a JSON-compatible format
+    new_conversation_history = conversation_to_json(conversation_history)
+    
+    # Check if the memory already exists for the client
+    try:
+        # Get the existing memory from the database
+        rider_memory_obj = RiderMemory.objects.get(rider_id=rider_id)
+        
+        # Load the existing conversation history from JSON
+        existing_history_json = rider_memory_obj.conversation_history
+        existing_history = json.loads(existing_history_json) if existing_history_json else []
+        
+        # Append the new conversation history to the existing one
+        updated_conversation_history = existing_history + new_conversation_history
+    except RiderMemory.DoesNotExist:
+        # If no memory exists, start with the new conversation history
+        updated_conversation_history = new_conversation_history
+
+        # Create a new record if none exists
+        rider_memory_obj = RiderMemory(rider_id=rider_id)
+    
+    # Convert the updated conversation history to a JSON string
+    conversation_history_json = json.dumps(updated_conversation_history)
+
+    # Update the object and save it to the database
+    rider_memory_obj.conversation_history = conversation_history_json
+    rider_memory_obj.save()
+
+
+
 
 # Function to send rider notifications and handle follow-ups
 def handle_rider_conversation(sender_id, message, order_id=0):
     # Get or create memory for the rider
     print(f'\n Order Id: {order_id} \n')
     rider_memory = get_rider_memory(sender_id)
+    print(f"\nwhole rider memory from db\n\n: {rider_memory}")
     # Retrieve conversation history
     memory_data = rider_memory.load_memory_variables({})
     chat_history = memory_data.get('history', [])
@@ -62,6 +183,9 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     
     # Store the conversation in the rider's memory
     rider_memory.save_context({"input": message}, {"output": response})
+
+    # Save the conversation history to MySQL
+    save_rider_memory(sender_id, chat_history)
     #print('\n', sender_id, '\n')
     # Send the notification to the rider
     send_message_to_rider(sender_id, response)
@@ -69,7 +193,7 @@ def handle_rider_conversation(sender_id, message, order_id=0):
 
     # Check if rider accepts delivery
     delivery_acceptance = riders_acceptance_chain.invoke(riders_input)
-    print(f"\n\nDelivery Acceptance 1 Order Id: {delivery_acceptance['order_id']}\n\n")
+    #print(f"\n\nDelivery Acceptance 1 Order Id: {delivery_acceptance['order_id']}\n\n")
     
     #print('\n', delivery_acceptance, '\n')
     #print(f'\n Delivery Acceptance: {delivery_acceptance}\n')
@@ -82,12 +206,12 @@ def handle_rider_conversation(sender_id, message, order_id=0):
         else:
             message = f"The delivery has been accepted and the rider can be contacted at {sender_id}"
             handle_client_conversation(f"whatsapp:{delivery_acceptance['phone_number']}", message, "notification")
-            print(f"\n\nDelivery Acceptance, should return Yes or No: {delivery_acceptance['acceptance']}\n\n")
-            print(f'\n\nOrder ID from Riders side on the if statement: {order_id}\n\n')
+            #print(f"\n\nDelivery Acceptance, should return Yes or No: {delivery_acceptance['acceptance']}\n\n")
+            #print(f'\n\nOrder ID from Riders side on the if statement: {order_id}\n\n')
 
             rider_id = get_rider_by_phone(sender_id)
 
-            print(f"\n\nDelivery Acceptance 2 Order Id: {delivery_acceptance['order_id']}\n\n")
+            #print(f"\n\nDelivery Acceptance 2 Order Id: {delivery_acceptance['order_id']}\n\n")
 
             update_order_status(delivery_acceptance['order_id'], 'active', rider_id)
             print('\n\nDone\n\n')
@@ -107,6 +231,7 @@ def handle_client_conversation(sender_id, message, type):
     else:
         # Get or create ConversationBufferMemory for the sender
         client_memory = get_client_memory(sender_id)
+        print(f"\nwhole client memory from db: {client_memory}")
         # Retrieve conversation history
         memory_data = client_memory.load_memory_variables({})
         chat_history = memory_data.get('history', [])
@@ -115,7 +240,7 @@ def handle_client_conversation(sender_id, message, type):
         if isinstance(chat_history, str):
             chat_history = []  # Initialize as empty list if it's an empty string
 
-        #print(chat_history)
+        print(chat_history)
 
         # Format input for the chatbot
         input_data = {
@@ -128,6 +253,11 @@ def handle_client_conversation(sender_id, message, type):
 
         # Store the new message in memory
         client_memory.save_context({"input": message}, {"output": response})
+
+        # Save the conversation history to MySQL
+        print(f"\n\nbefore saving, {client_memory}")
+        save_client_memory(sender_id, chat_history)
+        print("\nafter, client memory.")
 
         # Send the chatbot's response back via WhatsApp
         send_message_to_client(sender_id, response)
@@ -142,8 +272,8 @@ def handle_client_conversation(sender_id, message, type):
         # Retrieve the previous delivery request if available, else initialize with empty values
         previous_request = previous_delivery_requests.get(sender_id, {'pickup_location': 'None', 'dropoff_location': 'None'})
 
-        print(f'\nDelivery Request: {delivery_request}\n')
-        print(f'\nPrevious Request: {previous_request}\n')
+        #print(f'\nDelivery Request: {delivery_request}\n')
+        #print(f'\nPrevious Request: {previous_request}\n')
         
         # Check if the pickup and dropoff locations have changed and if both locations are provided
         if (delivery_request['pickup_location'] != "None" and delivery_request['dropoff_location'] != "None") and \
@@ -154,12 +284,13 @@ def handle_client_conversation(sender_id, message, type):
                 f"Order Id: {order_id} has been assigned by {delivery_request['phone_number']}. For new order, client has a delivery from {delivery_request['pickup_location']} to {delivery_request['dropoff_location']}." 
                 f"For updates, pickup location changed to {delivery_request['pickup_location']} or dropoff location changed to {delivery_request['dropoff_location']}."
                 f"Avoid using courteous phrases like 'Thank you for reaching out'; just focus on providing the necessary information to the riders."
+                f"Make sure the client phone number has been mentioned."
             )   
 
             print(f"\nDelivery request: {delivery_request}\n")
             print(f"\nPrevious request: {previous_request}\n")
 
-            print(f'\n Order Id 2: {order_id} \n')
+            #print(f'\n Order Id 2: {order_id} \n')
             # Get riders who don't have any order with status 'active'
             riders_without_pending_orders = Rider.objects.exclude(
                 id__in=Order.objects.filter(status='active').values('rider_id')
@@ -173,6 +304,7 @@ def handle_client_conversation(sender_id, message, type):
             # Convert the QuerySet to a list, if needed
             phone_numbers = list(phone_numbers)
             # Check if the phone numbers list is empty
+            print(f"attempting to send notification to rider: { phone_numbers } \n")
             if not phone_numbers:
                 print("No phone numbers to process.")
                 #TO DO: alert dispatch of pending order without rider
@@ -186,6 +318,7 @@ def handle_client_conversation(sender_id, message, type):
                         converted_phone_number = phone_number
 
                     # Call the handle_rider_conversation with the converted phone number
+                    print(f"attempting to send notification to rider: { converted_phone_number }, { message }, { order_id } \n")
                     handle_rider_conversation(converted_phone_number, message, order_id)
 
 

@@ -61,6 +61,27 @@ class Order(models.Model):
     def __str__(self):
         return f"Order {self.id} - {self.status}"
 
+from django.db import models
+
+class RiderMemory(models.Model):
+    rider_id = models.CharField(max_length=255)  # The sender_id or phone number
+    conversation_history = models.TextField()    # Store the conversation as a text (you can store it as JSON too)
+    last_updated = models.DateTimeField(auto_now=True)  # To track when the memory was last updated
+
+    def __str__(self):
+        return self.rider_id
+
+from django.db import models
+
+class ClientMemory(models.Model):
+    client_id = models.CharField(max_length=255)  # The sender_id or phone number
+    conversation_history = models.TextField()    # Store the conversation as a text (you can store it as JSON too)
+    last_updated = models.DateTimeField(auto_now=True)  # To track when the memory was last updated
+
+    def __str__(self):
+        return self.client_id
+
+
 """
 # quick start table :)
 
