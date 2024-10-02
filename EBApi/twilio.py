@@ -3,8 +3,8 @@ import logging
 import os
 # Third-party imports
 from twilio.rest import Client
-from dotenv import load_dotenv
-load_dotenv()
+#from dotenv import load_dotenv
+#load_dotenv()
 
 
 client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 # Sending message logic through Twilio Messaging API
 def send_message_to_client(to_number, body_text):
+    print(f"envs: {os.getenv('TWILIO_ACCOUNT_SID')}, {os.getenv('TWILIO_AUTH_TOKEN')}")
     try:
         message = client.messages.create(
             from_=f"whatsapp:+254794837755",
@@ -28,6 +29,7 @@ def send_message_to_client(to_number, body_text):
 
 # Sending message logic to riders via Twilio Messaging API
 def send_message_to_rider(to_number, body_text):
+    print(f"envs: {os.getenv('TWILIO_ACCOUNT_SID')}, {os.getenv('TWILIO_AUTH_TOKEN')}")
     try:
         message = client.messages.create(
             from_=f"whatsapp:+254794837755",
