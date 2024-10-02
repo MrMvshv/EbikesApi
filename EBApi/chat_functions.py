@@ -53,7 +53,7 @@ def get_lat_long(location_name):
 
 def check_rider(sender_id):
     # checks rider phone number in db
-    print('\n', sender_id, '\n')
+    print('Checking rider:\n', sender_id, '\n')
 
     # Check if the phone number is in the format +254XXXXXXXXX
     if sender_id.startswith("whatsapp:+254"):
