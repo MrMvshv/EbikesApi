@@ -6,15 +6,15 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'EBARestAPIServer.settings')
 django.setup()
 
 # Import your utility functions
-from EBApi.db_utils import clear_riders, clear_orders, clear_all_tables  # Replace 'your_app' with your app name
+from EBApi.db_utils import clear_riders, clear_orders, clear_all_tables, clear_messages  # Replace 'your_app' with your app name
 
 # Optionally, you can interact with other models or add logging
 
 def main():
     # Call the utility functions to clear the tables
-    clear_riders()  # Clears the Rider table
+    #clear_riders()  # Clears the Rider table
     #clear_orders()  # Clears the Order table
-    
+    clear_messages()
     # Alternatively, call the function to clear all tables
     # clear_all_tables()
 

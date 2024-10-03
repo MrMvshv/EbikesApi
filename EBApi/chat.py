@@ -69,7 +69,7 @@ def get_rider_memory(rider_id: str):
     try:
         # Try to retrieve the memory from the database
         rider_memory_obj = RiderMemory.objects.get(rider_id=rider_id)
-        conversation_history = json.loads(rider_memory_obj.conversation_history)  # Load the conversation history from JSON
+        conversation_history = deserialize_messages(rider_memory_obj.conversation_history)  
         print(f"\n\n\n\n\nin get rider memory, convhist: {conversation_history}\n\n\n")
     except RiderMemory.DoesNotExist:
         # If no memory is found, initialize an empty memory
@@ -80,8 +80,15 @@ def get_rider_memory(rider_id: str):
         max_token_limit=1000,
         llm=model,
         return_messages=True,
-        chat_history=conversation_history
     )
+
+    for message in conversation_history:
+        print(f"\n\n\n\n\nadding message: \n{message}\n\n\n")
+        if isinstance(message, HumanMessage):
+            rider_memory.chat_memory.add_message(HumanMessage(content=message.content))
+        elif isinstance(message, AIMessage):
+            rider_memory.chat_memory.add_message(AIMessage(content=message.content))
+
     print(f"\n\n\nrider memory object gotten: {rider_memory}\n\n\n\n")
     return rider_memory
 
@@ -151,6 +158,8 @@ def save_client_memory(client_id: str, conversation_history):
         # Create a new record if none exists
         client_memory_obj = ClientMemory(client_id=client_id)
     
+    updated_conversation_history = updated_conversation_history[-5:]
+    
     # Convert the updated conversation history to a JSON string
     conversation_history_json = json.dumps(updated_conversation_history)
 
@@ -182,6 +191,8 @@ def save_rider_memory(rider_id: str, conversation_history):
 
         # Create a new record if none exists
         rider_memory_obj = RiderMemory(rider_id=rider_id)
+    
+    updated_conversation_history = updated_conversation_history[-5:]
     
     # Convert the updated conversation history to a JSON string
     conversation_history_json = json.dumps(updated_conversation_history)
