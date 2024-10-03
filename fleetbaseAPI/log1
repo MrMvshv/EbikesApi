@@ -1,0 +1,104 @@
+Received webhook data
+
+
+Form Data: <QueryDict: {'SmsMessageSid': ['SM09b8f3788be15e6e6bc3df8abeb1b8fb'], 'NumMedia': ['0'], 'ProfileName': ['Mvshv'], 'MessageType': ['text'], 'SmsSid': ['SM09b8f3788be15e6e6bc3df8abeb1b8fb'], 'WaId': ['254701638574'], 'SmsStatus': ['received'], 'Body': ['Hey'], 'To': ['whatsapp:+254794837755'], 'NumSegments': ['1'], 'ReferralNumMedia': ['0'], 'MessageSid': ['SM09b8f3788be15e6e6bc3df8abeb1b8fb'], 'AccountSid': ['AC31cba00f3422400832bc11d4c14b1417'], 'From': ['whatsapp:+254701638574'], 'ApiVersion': ['2010-04-01']}>
+
+
+Checking rider:
+ whatsapp:+254701638574 
+
+found user, whatsapp:+254701638574
+Loading memory for client ID: whatsapp:+254701638574
+Conversation history loaded: [HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Hell9', timestamp=None), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can we assist you today?', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Save', timestamp=None), AIMessage(content="I'm here to assist you! However, it seems that your message is incomplete. Could you please clarify what you would like to save or any specific request you have? Thank you!", timestamp=None), HumanMessage(content='Elllooo', timestamp=None), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Final', timestamp=None), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How may I assist you today? If you have any specific inquiries or requests, please feel free to share!', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None)]
+
+
+
+
+Client memory object gotten.: return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x785febf23e50>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x785febf92380>, root_client=<openai.OpenAI object at 0x785ff071a950>, root_async_client=<openai.AsyncOpenAI object at 0x785febf23eb0>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+
+
+
+
+
+
+ client memory from db: return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x785febf23e50>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x785febf92380>, root_client=<openai.OpenAI object at 0x785ff071a950>, root_async_client=<openai.AsyncOpenAI object at 0x785febf23eb0>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+client chat history: []
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+
+
+before saving, chat_memory=InMemoryChatMessageHistory(messages=[HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')]) return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x785febf23e50>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x785febf92380>, root_client=<openai.OpenAI object at 0x785ff071a950>, root_async_client=<openai.AsyncOpenAI object at 0x785febf23eb0>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+convo history client:, [HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')], <class 'list'>
+
+after, client memory.
+envs: AC31cba00f3422400832bc11d4c14b1417, 404f984b46a551c7f19c294def03d410
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC31cba00f3422400832bc11d4c14b1417/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:User-Agent : twilio-python/9.2.4 (Linux x86_64) Python/3.10.13
+INFO:twilio.http_client:X-Twilio-Client : python-9.2.4
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Content-Type': 'application/json;charset=utf-8', 'Content-Length': '843', 'Connection': 'keep-alive', 'Date': 'Thu, 03 Oct 2024 17:46:28 GMT', 'X-Powered-By': 'AT-5000', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQa17f205b90f667a57482297841063274', 'Twilio-Request-Duration': '0.110', 'X-Home-Region': 'us1', 'X-Api-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, Idempotency-Key, X-Pre-Auth-Context, X-Target-Region', 'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag, Twilio-Request-Id', 'Access-Control-Allow-Credentials': 'true', 'X-Shenanigans': 'none', 'X-Cache': 'Miss from cloudfront', 'Via': '1.1 306f9988120d2932240ba9b255b159ba.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'BOM78-P4', 'X-Amz-Cf-Id': '9tcbx9Eno4viZ2NhWMxr7GUh2qhQIzQmStKLTkdJE6hNU6X4T4R1cw=='}
+
+
+ after saving, Chat History: [HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')]
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[03/Oct/2024 17:46:29] "POST /webhook/ HTTP/1.1" 200 21
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Received webhook data
+
+
+Form Data: <QueryDict: {'SmsMessageSid': ['SM588f0b6f6f9f4ab8f95015be09b966b8'], 'NumMedia': ['0'], 'ProfileName': ['Mvshv'], 'MessageType': ['text'], 'SmsSid': ['SM588f0b6f6f9f4ab8f95015be09b966b8'], 'WaId': ['254701638574'], 'SmsStatus': ['received'], 'Body': ['Hey2'], 'To': ['whatsapp:+254794837755'], 'NumSegments': ['1'], 'ReferralNumMedia': ['0'], 'MessageSid': ['SM588f0b6f6f9f4ab8f95015be09b966b8'], 'AccountSid': ['AC31cba00f3422400832bc11d4c14b1417'], 'From': ['whatsapp:+254701638574'], 'ApiVersion': ['2010-04-01']}>
+
+
+Checking rider:
+ whatsapp:+254701638574 
+
+found user, whatsapp:+254701638574
+Loading memory for client ID: whatsapp:+254701638574
+Conversation history loaded: [HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Hell9', timestamp=None), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can we assist you today?', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Save', timestamp=None), AIMessage(content="I'm here to assist you! However, it seems that your message is incomplete. Could you please clarify what you would like to save or any specific request you have? Thank you!", timestamp=None), HumanMessage(content='Elllooo', timestamp=None), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Final', timestamp=None), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How may I assist you today? If you have any specific inquiries or requests, please feel free to share!', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None), HumanMessage(content='Hey', timestamp=None), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?', timestamp=None)]
+
+
+
+
+Client memory object gotten.: return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x785febf23e50>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x785febf92380>, root_client=<openai.OpenAI object at 0x785ff071a950>, root_async_client=<openai.AsyncOpenAI object at 0x785febf23eb0>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+
+
+
+
+
+
+ client memory from db: return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x785febf23e50>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x785febf92380>, root_client=<openai.OpenAI object at 0x785ff071a950>, root_async_client=<openai.AsyncOpenAI object at 0x785febf23eb0>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+client chat history: []
+
+
+
+before saving, chat_memory=InMemoryChatMessageHistory(messages=[HumanMessage(content='Hey2'), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How can I assist you today?')]) return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x785febf23e50>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x785febf92380>, root_client=<openai.OpenAI object at 0x785ff071a950>, root_async_client=<openai.AsyncOpenAI object at 0x785febf23eb0>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+convo history client:, [HumanMessage(content='Hey2'), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How can I assist you today?')], <class 'list'>
+
+after, client memory.
+
+
+ after saving, Chat History: [HumanMessage(content='Hey2'), AIMessage(content='Hello! Thank you for reaching out to Ebikes Africa. How can I assist you today?')]

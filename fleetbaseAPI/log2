@@ -1,0 +1,97 @@
+Received webhook data
+
+
+Form Data: <QueryDict: {'SmsMessageSid': ['SM5e0928f6210ad35f172de0bca06cbae0'], 'NumMedia': ['0'], 'ProfileName': ['Mvshv'], 'MessageType': ['text'], 'SmsSid': ['SM5e0928f6210ad35f172de0bca06cbae0'], 'WaId': ['254701638574'], 'SmsStatus': ['received'], 'Body': ['Hey'], 'To': ['whatsapp:+254794837755'], 'NumSegments': ['1'], 'ReferralNumMedia': ['0'], 'MessageSid': ['SM5e0928f6210ad35f172de0bca06cbae0'], 'AccountSid': ['AC31cba00f3422400832bc11d4c14b1417'], 'From': ['whatsapp:+254701638574'], 'ApiVersion': ['2010-04-01']}>
+
+
+Checking rider:
+ whatsapp:+254701638574 
+
+found user, whatsapp:+254701638574
+
+
+
+
+Client memory object gotten.: return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x7037c1c0a9e0>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x7037c1256470>, root_client=<openai.OpenAI object at 0x7037c1b32aa0>, root_async_client=<openai.AsyncOpenAI object at 0x7037c1220070>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+
+
+
+
+
+
+ client memory from db: return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x7037c1c0a9e0>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x7037c1256470>, root_client=<openai.OpenAI object at 0x7037c1b32aa0>, root_async_client=<openai.AsyncOpenAI object at 0x7037c1220070>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+client chat history: []
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+
+
+before saving, chat_memory=InMemoryChatMessageHistory(messages=[HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')]) return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x7037c1c0a9e0>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x7037c1256470>, root_client=<openai.OpenAI object at 0x7037c1b32aa0>, root_async_client=<openai.AsyncOpenAI object at 0x7037c1220070>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+
+after, client memory.
+envs: AC31cba00f3422400832bc11d4c14b1417, 404f984b46a551c7f19c294def03d410
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC31cba00f3422400832bc11d4c14b1417/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:User-Agent : twilio-python/9.2.4 (Linux x86_64) Python/3.10.13
+INFO:twilio.http_client:X-Twilio-Client : python-9.2.4
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Date': 'Thu, 03 Oct 2024 17:37:07 GMT', 'Content-Type': 'application/json;charset=utf-8', 'Content-Length': '843', 'Connection': 'keep-alive', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQ593be3733803b16718a3d9d85e1efb88', 'Twilio-Request-Duration': '0.120', 'X-Home-Region': 'us1', 'X-Api-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, Idempotency-Key, X-Pre-Auth-Context, X-Target-Region', 'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag, Twilio-Request-Id', 'Access-Control-Allow-Credentials': 'true', 'X-Shenanigans': 'none', 'X-Powered-By': 'AT-5000'}
+
+
+ after saving, Chat History: [HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')]
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[03/Oct/2024 17:37:08] "POST /webhook/ HTTP/1.1" 200 21
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Received webhook data
+
+
+Form Data: <QueryDict: {'SmsMessageSid': ['SMfc22cddf660e6f535a25a162f97f3912'], 'NumMedia': ['0'], 'ProfileName': ['Mvshv'], 'MessageType': ['text'], 'SmsSid': ['SMfc22cddf660e6f535a25a162f97f3912'], 'WaId': ['254701638574'], 'SmsStatus': ['received'], 'Body': ['Hey2'], 'To': ['whatsapp:+254794837755'], 'NumSegments': ['1'], 'ReferralNumMedia': ['0'], 'MessageSid': ['SMfc22cddf660e6f535a25a162f97f3912'], 'AccountSid': ['AC31cba00f3422400832bc11d4c14b1417'], 'From': ['whatsapp:+254701638574'], 'ApiVersion': ['2010-04-01']}>
+
+
+Checking rider:
+ whatsapp:+254701638574 
+
+found user, whatsapp:+254701638574
+
+
+
+
+Client memory object gotten.: chat_memory=InMemoryChatMessageHistory(messages=[HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')]) return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x7037c1c0a9e0>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x7037c1256470>, root_client=<openai.OpenAI object at 0x7037c1b32aa0>, root_async_client=<openai.AsyncOpenAI object at 0x7037c1220070>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+
+
+
+
+
+
+ client memory from db: chat_memory=InMemoryChatMessageHistory(messages=[HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')]) return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x7037c1c0a9e0>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x7037c1256470>, root_client=<openai.OpenAI object at 0x7037c1b32aa0>, root_async_client=<openai.AsyncOpenAI object at 0x7037c1220070>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+client chat history: [HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?')]
+
+
+
+before saving, chat_memory=InMemoryChatMessageHistory(messages=[HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?'), HumanMessage(content='Hey2'), AIMessage(content='Hello again! How can I assist you today? If you have any specific questions or requests, feel free to share!')]) return_messages=True llm=ChatOpenAI(client=<openai.resources.chat.completions.Completions object at 0x7037c1c0a9e0>, async_client=<openai.resources.chat.completions.AsyncCompletions object at 0x7037c1256470>, root_client=<openai.OpenAI object at 0x7037c1b32aa0>, root_async_client=<openai.AsyncOpenAI object at 0x7037c1220070>, model_name='gpt-4o-mini', temperature=0.4, openai_api_key=SecretStr('**********'), openai_proxy='') max_token_limit=1000
+
+after, client memory.
+
+
+
+ after saving, Chat History: [HumanMessage(content='Hey'), AIMessage(content='Hello! Welcome to Ebikes Africa. How can I assist you today?'), HumanMessage(content='Hey2'), AIMessage(content='Hello again! How can I assist you today? If you have any specific questions or requests, feel free to share!')]

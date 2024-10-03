@@ -18,10 +18,10 @@ from .rider_request import riders_chain, riders_acceptance_chain, delivery_compl
 from .chat_functions import post_order_from_chat, update_order_status, get_rider_by_phone, check_order, get_order_id
 
 
-# # # Dictionary to store ConversationBufferMemory for each user
-# # client_memories = {}
-# # # Dictionary to store ConversationBufferMemory for each rider
-# # rider_memories = {}
+# # Dictionary to store ConversationBufferMemory for each user
+# client_memories = {}
+# # Dictionary to store ConversationBufferMemory for each rider
+# rider_memories = {}
 
 # # Dictionary to store the previous delivery request for each user
 previous_delivery_requests = {}
@@ -30,11 +30,13 @@ previous_delivery_requests = {}
 # def get_client_memory(session_id: str):
 #     if session_id not in client_memories:
 #         client_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
+#     print(f"\n\n\n\nClient memory object gotten.: {client_memories[session_id]}\n\n\n\n")
 #     return client_memories[session_id]
 
 # def get_rider_memory(session_id: str):
 #     if session_id not in rider_memories:
 #         rider_memories[session_id] = ConversationTokenBufferMemory(max_token_limit=1000, llm=model, return_messages=True)
+#     print(f"\n\n\n\nClient memory object gotten.: {rider_memories[session_id]}\n\n\n\n")
 #     return rider_memories[session_id]
 
 # Function to convert a message object to a serializable dictionary
@@ -50,13 +52,25 @@ def message_to_dict(message):
 def conversation_to_json(conversation_history):
     return [message_to_dict(message) for message in conversation_history]
 
-    
+def dict_to_message(message_dict):
+    if message_dict['type'] == 'human':
+        return HumanMessage(content=message_dict['content'])
+    elif message_dict['type'] == 'ai':
+        return AIMessage(content=message_dict['content'])
+    else:
+        raise ValueError("Unknown message type: {}".format(message_dict['type']))
+
+def deserialize_messages(json_data):
+    message_dicts = json.loads(json_data)  # Deserialize from JSON
+    return [dict_to_message(msg_dict) for msg_dict in message_dicts]
+   
 # Function to get rider memory from MySQL
 def get_rider_memory(rider_id: str):
     try:
         # Try to retrieve the memory from the database
         rider_memory_obj = RiderMemory.objects.get(rider_id=rider_id)
         conversation_history = json.loads(rider_memory_obj.conversation_history)  # Load the conversation history from JSON
+        print(f"\n\n\n\n\nin get rider memory, convhist: {conversation_history}\n\n\n")
     except RiderMemory.DoesNotExist:
         # If no memory is found, initialize an empty memory
         conversation_history = []
@@ -66,28 +80,51 @@ def get_rider_memory(rider_id: str):
         max_token_limit=1000,
         llm=model,
         return_messages=True,
+        chat_history=conversation_history
     )
-    
+    print(f"\n\n\nrider memory object gotten: {rider_memory}\n\n\n\n")
     return rider_memory
 
 # Function to get client memory from MySQL
 def get_client_memory(client_id: str):
+    print(f"Loading memory for client ID: {client_id}")
+    
     try:
         # Try to retrieve the memory from the database
         client_memory_obj = ClientMemory.objects.get(client_id=client_id)
-        conversation_history = json.loads(client_memory_obj.conversation_history)  # Load the conversation history from JSON
+        
+        # Load the conversation history from JSON
+        conversation_history = deserialize_messages(client_memory_obj.conversation_history)  
+        print(f"Conversation history loaded: {conversation_history}")
+        #chat_memory = InMemoryChatMessageHistory(messages=conversation_history)
     except ClientMemory.DoesNotExist:
         # If no memory is found, initialize an empty memory
         conversation_history = []
+        print("No existing conversation history found. Initializing empty memory.")
 
-    # Create the memory object for the rider (with loaded conversation)
+    except json.JSONDecodeError:
+        # Handle JSON decoding errors if the stored data is not in the expected format
+        print("Error: Failed to decode conversation history from JSON. Initializing empty memory.")
+        conversation_history = []
+
+    # Create the memory object for the client (with loaded conversation)
     client_memory = ConversationTokenBufferMemory(
         max_token_limit=1000,
         llm=model,
         return_messages=True,
     )
-    
+
+       # Load messages into the memory's chat history
+    for message in conversation_history:
+        print(f"\n\n\n\n\nadding message: \n{message}\n\n\n")
+        if isinstance(message, HumanMessage):
+            client_memory.chat_memory.add_message(HumanMessage(content=message.content))
+        elif isinstance(message, AIMessage):
+            client_memory.chat_memory.add_message(AIMessage(content=message.content))
+
+    print(f"\n\n\n\nClient memory object gotten.: {client_memory}\n\n {client_memory.chat_memory.messages}\n\n")
     return client_memory
+
 
 # Function to save or append client memory
 def save_client_memory(client_id: str, conversation_history):
@@ -166,11 +203,11 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     memory_data = rider_memory.load_memory_variables({})
     chat_history = memory_data.get('history', [])
 
-    print(f'\n Chat history: {chat_history}')
-
     # Ensure chat_history is a list, even if empty
     if isinstance(chat_history, str):
         chat_history = []  # Initialize as empty list if it's an empty string
+
+    print(f'\n Chat history: {chat_history}')
 
     # Prepare the input for the rider chain 
     riders_input = {
@@ -185,7 +222,9 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     rider_memory.save_context({"input": message}, {"output": response})
 
     # Save the conversation history to MySQL
+    print(f"\n\nbefore saving, {rider_memory}")
     save_rider_memory(sender_id, chat_history)
+    print("\n\nafter, rider_memory")
     #print('\n', sender_id, '\n')
     # Send the notification to the rider
     send_message_to_rider(sender_id, response)
@@ -231,7 +270,7 @@ def handle_client_conversation(sender_id, message, type):
     else:
         # Get or create ConversationBufferMemory for the sender
         client_memory = get_client_memory(sender_id)
-        print(f"\nwhole client memory from db: {client_memory}")
+        print(f"\n\n client memory from db: {client_memory}")
         # Retrieve conversation history
         memory_data = client_memory.load_memory_variables({})
         chat_history = memory_data.get('history', [])
@@ -240,7 +279,7 @@ def handle_client_conversation(sender_id, message, type):
         if isinstance(chat_history, str):
             chat_history = []  # Initialize as empty list if it's an empty string
 
-        print(chat_history)
+        print(f"client chat history: {chat_history}")
 
         # Format input for the chatbot
         input_data = {
@@ -262,7 +301,7 @@ def handle_client_conversation(sender_id, message, type):
         # Send the chatbot's response back via WhatsApp
         send_message_to_client(sender_id, response)
 
-        print(f'\n\n Chat History: {chat_history}')
+        print(f'\n\n after saving, Chat History: {chat_history}')
 
         # Get delivery request (pickup and dropoff locations)
         delivery_request = location_chain.invoke(chat_history)
