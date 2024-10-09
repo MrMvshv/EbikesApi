@@ -201,8 +201,20 @@ def save_rider_memory(rider_id: str, conversation_history):
     rider_memory_obj.conversation_history = conversation_history_json
     rider_memory_obj.save()
 
-
-
+#clear rider memory after order complete
+def clear_rider_memory(rider_id: str):
+    try:
+        # Get the rider memory object from the database
+        rider_memory_obj = RiderMemory.objects.get(rider_id=rider_id)
+        
+        # Clear the conversation history
+        rider_memory_obj.conversation_history = json.dumps([])  # Empty conversation history
+        rider_memory_obj.save()
+        
+        print(f"Rider memory cleared successfully for rider ID: {rider_id}")
+    
+    except RiderMemory.DoesNotExist:
+        print(f"No memory found for rider ID: {rider_id}")
 
 # Function to send rider notifications and handle follow-ups
 def handle_rider_conversation(sender_id, message, order_id=0):
@@ -272,6 +284,8 @@ def handle_rider_conversation(sender_id, message, order_id=0):
         rider_id = get_rider_by_phone(sender_id)
         completed_order_id = get_order_id(sender_id)
         update_order_status(completed_order_id, 'completed', rider_id)
+        clear_rider_memory(rider_id)
+
 
 
 # Function to send client notifications and handle follow-ups
