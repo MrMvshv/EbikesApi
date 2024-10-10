@@ -5,6 +5,15 @@ from django.db.models import Q
 NAIROBI_CBD_LAT = -1.286389
 NAIROBI_CBD_LONG = 36.817223
 
+def get_client_id(order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+        user_id = order.user.id
+        return user_id
+    except Order.DoesNotExist:
+        return None
+    
+    
 def get_or_create_location(address, latitude, longitude):
     """Get or create a location given the address, latitude, and longitude."""
     location, created = Location.objects.get_or_create(
