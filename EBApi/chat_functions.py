@@ -5,6 +5,25 @@ from django.db.models import Q
 NAIROBI_CBD_LAT = -1.286389
 NAIROBI_CBD_LONG = 36.817223
 
+def get_or_create_location(address, latitude, longitude):
+    """Get or create a location given the address, latitude, and longitude."""
+    location, created = Location.objects.get_or_create(
+        address=address,
+        defaults={
+            'latitude': latitude,
+            'longitude': longitude
+        }
+    )
+    return location
+    
+def get_location_id_by_address(address):
+    """Get the location ID by address. Returns the ID if found, else None."""
+    try:
+        location = Location.objects.get(address=address)
+        return location
+    except Location.DoesNotExist:
+        return None
+
 def update_order_status(order_id, new_status, rider_id):
     """
     Update the status of an order.
@@ -110,18 +129,10 @@ def post_order_from_chat(pickup, dropoff, phone_number, notes):
     dropoff_lat, dropoff_long = NAIROBI_CBD_LAT, NAIROBI_CBD_LONG
 
      # Create the pickup and dropoff locations
-    pickup_location = Location.objects.create(
-        address=pickup, 
-        latitude=pickup_lat, 
-        longitude=pickup_long
-    )
-    dropoff_location = Location.objects.create(
-        address=dropoff, 
-        latitude=dropoff_lat, 
-        longitude=dropoff_long
-    )
+    pickup_location = get_or_create_location(pickup, pickup_lat, pickup_long)
+    dropoff_location = get_or_create_location(dropoff, dropoff_lat, dropoff_long)
     print('\n')
-    print(pickup_location, dropoff_location)
+    print("p, d:\n", pickup_location, dropoff_location)
     print('\n')
     
     # Find or create the user by phone number
