@@ -253,7 +253,8 @@ def handle_rider_conversation(sender_id, message, order_id=0):
     # Send message to client to rider accepts request
     if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
         if check_order(delivery_acceptance['order_id']):
-            send_message_to_rider(sender_id, 'Order has already been taken')
+            print('\n\nDelivery Order ID: ', {delivery_acceptance['order_id']}, '\n\n')
+            send_message_to_rider(sender_id, 'Am sorry. It seems like the order has already been taken')
         else:
             message = (
                 f"Good news! Your delivery has been accepted by a rider. "
@@ -275,13 +276,16 @@ def handle_rider_conversation(sender_id, message, order_id=0):
         update_order_status(completed_order_id, 'completed', rider_id)
         clear_rider_memory(rider_id)
 
-        client = get_client_id(completed_order_id)
-        client_id = User.objects.get(id=client)
-        client_id = get_user_by_phone(client_id)
+        client_id = get_client_id(completed_order_id)
+        print('\n\nClient: ', client_id, '\n\n')
+        client = User.objects.get(id=client_id)
+        client_number = client.phone_number
+        print('\n\nClient Print 1: ', client, '\n\n')
+        print('\n\nClient Print 2: ', client_number, '\n\n')
         message = f"I am pleased to inform you that your delivery has been successfully completed!\n"
         f"We hope everything went smoothly with your ride. Now that your order is complete, please proceed with making your payment.\n"
         f"If you have any feedback or questions, please don't hesitate to contact us. Your satisfaction is our priority! Thank you for choosing Ebikes Africa and we look forward to serving you again soon."
-        handle_client_conversation(client_id, message, "notification")
+        handle_client_conversation(client_number, message, "notification")
         clear_client_memory(client_id)
 
 
@@ -432,10 +436,6 @@ def handle_client_conversation(sender_id, message, type='general'):
             p_up = get_location_id_by_address(delivery_request['pickup_location'])
             d_off = get_location_id_by_address(delivery_request['dropoff_location'])
             if p_up == None and d_off == None:
-                # update_message = (
-                #     f"Order Id: {existing_order.id} is pending, ae you available to handle the order?"
-                # )
-                # notify_riders(existing_order, update_message)
                 return
             print(p_up, d_off, "poff")
             # Order exists: Check if there's a change in the pickup/dropoff locations

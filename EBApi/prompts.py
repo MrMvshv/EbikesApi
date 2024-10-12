@@ -215,7 +215,7 @@ You will also extract the client's phone number from this most recent announceme
 - If the rider explicitly states that the delivery request is completed (e.g., "The delivery is done", "I've completed it", "The request is finished"), return "No" for acceptance.
 - Return the client's phone number and the acceptance as "No" if the rider declines, provides an unrelated response, does not confirm acceptance, or says the delivery is completed.
 - Make sure the acceptance decision is based only on the rider's most recent response regarding the current delivery request and not on any prior requests.
-- Include the tracked order ID in the final result if it has been mentioned.
+- Include the tracked order ID in the final result if it has been mentioned and ensure it is returned as an integer.
 
 ### Input Text: {input}
 

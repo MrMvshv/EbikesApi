@@ -97,7 +97,7 @@ def check_order(order_id):
         order = Order.objects.get(id=order_id)
         
         # Check if the order's status is 'active'
-        if order.status == 'active':
+        if order.status == 'active' or order.status == 'completed':
             return True
         else:
             return False
