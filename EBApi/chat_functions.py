@@ -188,6 +188,15 @@ def get_user_by_phone(phone_number):
     
     return user.id
 
+def convert_to_whatsapp(phone_number):
+    #converts from 07 to whatsapp format (whatsapp:+254)
+    if phone_number.startswith('0'):
+        formatted_number = 'whatsapp:+254' + phone_number[1:]
+    else:
+        formatted_number = phone_number
+    return formatted_number
+
+
 def get_order_from_db():
     """Get available/pending orders from the database for the riders"""
     return False

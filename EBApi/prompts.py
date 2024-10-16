@@ -114,30 +114,31 @@ CLIENT_PROMPT = """
 
 LOCATION_PROMPT = """
     As an expert in natural language processing and location extraction, your task is to analyze the \
-    client's conversation history to accurately identify and extract updated pickup and drop-off locations \
-    for Ebikes Africa's delivery services.
+    most recent message in the client's conversation history to accurately identify and extract updated \
+    pickup and drop-off locations for Ebikes Africa's delivery services.
 
-    ### Conversation History: {conversation_history}
+    ### Most Recent Message: {most_recent_message}
 
     ### Instructions:
     1. **Pickup Location**:  
-        - Identify the most recent pickup location mentioned in the conversation history.
-        - If the pickup location is unclear or absent in the conversation history, respond with "None".
+        - Identify the pickup location mentioned in the most recent message.
+        - If the pickup location is unclear or absent in the most recent message, respond with "None".
     
     2. **Drop-off Location**:
-        - Identify the most recent drop-off location mentioned in the conversation history.
-        - If the drop-off location is unclear or absent in the conversation history, respond with "None".
+        - Identify the drop-off location mentioned in the most recent message.
+        - If the drop-off location is unclear or absent in the most recent message, respond with "None".
 
     ### Guidelines:
-    - Only extract the most up-to-date locations based on the conversation history without checking the latest input.
+    - Only extract the pickup and drop-off locations from the most recent message, ignoring the previous conversation history.
     - Provide only the confirmed pickup and drop-off locations without any additional commentary or context.
     - Ensure responses are precise and concise.
-    - In cases of ambiguity or unclear information regarding locations, opt to write "None" instead of making assumptions or guesses.
-    
-    Your task is to ensure the client is provided with accurate pickup and drop-off details based on the conversation history.
+    - In cases of ambiguity or unclear information regarding locations in the most recent message, opt to write "None" instead of making assumptions or guesses.
+
+    Your task is to ensure the client is provided with accurate pickup and drop-off details based on the most recent message.
     
     {format_instructions}
 """
+
 
 
 RIDERS_PROMPT = """

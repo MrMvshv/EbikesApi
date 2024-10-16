@@ -64,7 +64,7 @@ MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c91
 MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 
 #db
-"""
+
 #local db settings
 DATABASES = {
     'default': {
@@ -88,7 +88,7 @@ DATABASES = {
         'PORT': '3306',  # Set to empty string for default.
     }
 }
-
+"""
 
 
 MIDDLEWARE = [
