@@ -16,6 +16,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+    email = serializers.EmailField(required=False, allow_blank=True)
+    
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location

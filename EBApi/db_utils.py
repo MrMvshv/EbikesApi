@@ -1,4 +1,4 @@
-from .models import Rider, Order, Location, RiderMemory, ClientMemory, Location  # Replace 'your_app' with the actual app name
+from .models import Rider, Order, Location, RiderMemory, ClientMemory, Location, User  # Replace 'your_app' with the actual app name
 
 def clear_riders():
     """
@@ -7,14 +7,19 @@ def clear_riders():
     Rider.objects.all().delete()
     print("Rider table cleared.")
 
+def clear_users():
+    """
+    Utility function to clear the Rider table.
+    """
+    User.objects.all().delete()
+    print("User table cleared.")
+
 def clear_orders():
     """
     Utility function to clear the Order table.
     """
     Order.objects.all().delete()
     print("Order table cleared.")
-
-
 
 def clear_location():
     """
