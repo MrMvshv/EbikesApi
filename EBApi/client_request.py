@@ -34,6 +34,8 @@ def get_location_prompt_template():
     class Location(BaseModel):
         pickup_location: str = Field(description="Client pick-up location")
         dropoff_location: str = Field(description="Client drop-off location")
+        pickup_point_of_interest: str = Field(description='Client pick-up point of interest')
+        dropoff_point_of_interest: str = Field(description="Client drop off point of interest")
 
     json_parser = JsonOutputParser(pydantic_object=Location)
     format_instructions = json_parser.get_format_instructions()

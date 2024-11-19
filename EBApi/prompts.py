@@ -117,24 +117,44 @@ LOCATION_PROMPT = """
     most recent message in the client's conversation history to accurately identify and extract updated \
     pickup and drop-off locations for Ebikes Africa's delivery services.
 
-    ### Most Recent Message: {most_recent_message}
+    ### Conversation History: {conversation_history}
 
     ### Instructions:
     1. **Pickup Location**:  
-        - Identify the pickup location mentioned in the most recent message.
+        - Identify the full pickup location mentioned in the most recent message, including area, street, and any relevant details.
         - If the pickup location is unclear or absent in the most recent message, respond with "None".
-    
+
     2. **Drop-off Location**:
-        - Identify the drop-off location mentioned in the most recent message.
+        - Identify the full drop-off location mentioned in the most recent message, including area, street, and any relevant details.
         - If the drop-off location is unclear or absent in the most recent message, respond with "None".
 
-    ### Guidelines:
-    - Only extract the pickup and drop-off locations from the most recent message, ignoring the previous conversation history.
-    - Provide only the confirmed pickup and drop-off locations without any additional commentary or context.
-    - Ensure responses are precise and concise.
-    - In cases of ambiguity or unclear information regarding locations in the most recent message, opt to write "None" instead of making assumptions or guesses.
+    3. **Pickup Point of Interest**:
+        - From the pickup location, extract and highlight the building name or specific location name (e.g., "Two Rivers Mall," "Kenyatta National Hospital").
+        - Ignore additional details like floors, suite numbers, or other non-essential information.
+        - If no specific building name or location is provided, respond with "None".
 
-    Your task is to ensure the client is provided with accurate pickup and drop-off details based on the most recent message.
+    4. **Drop-off Point of Interest**:
+        - From the drop-off location, extract and highlight the building name or specific location name (e.g., "The Sarova Stanley," "Village Market").
+        - Ignore additional details like floors, suite numbers, or other non-essential information.
+        - If no specific building name or location is provided, respond with "None".
+
+    ### Guidelines:
+    - Only extract the pickup and drop-off details from the most recent message, ignoring the previous conversation history.
+    - Ensure that the pickup and drop-off points of interest focus solely on building names or location names that are compatible with Google Maps for geocoding.
+    - Provide precise and concise responses for all fields.
+    - In cases of ambiguity or unclear information, respond with "None" rather than making assumptions or guesses.
+
+    ### Output Format:
+    - **Pickup Location**: [Full Pickup Location Details]  
+      (e.g., "The Sarova Stanley, Kimathi Street, Nairobi CBD" or "None")
+    - **Drop-off Location**: [Full Drop-off Location Details]  
+      (e.g., "Kenyatta National Hospital, Hospital Road, Upper Hill, Nairobi" or "None")
+    - **Pickup Point of Interest**: [Pickup Building Name or Specific Location Name]  
+      (e.g., "The Sarova Stanley" or "None")
+    - **Drop-off Point of Interest**: [Drop-off Building Name or Specific Location Name]  
+      (e.g., "Kenyatta National Hospital" or "None")
+
+    Your task is to ensure the client is provided with accurate and Google Maps-compatible pickup and drop-off details, emphasizing building names or specific locations for geocoding purposes.
     
     {format_instructions}
 """

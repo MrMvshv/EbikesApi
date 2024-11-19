@@ -14,8 +14,8 @@ def main():
     # Call the utility functions to clear the tables
     clear_users()   #clear users
     #clear_riders()  # Clears the Rider table
-    #clear_orders()  # Clears the Order table
-    #clear_messages()
+    clear_orders()  # Clears the Order table
+    clear_messages()
     # Alternatively, call the function to clear all tables
     #clear_all_tables()
 

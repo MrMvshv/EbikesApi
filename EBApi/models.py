@@ -1,5 +1,5 @@
 from django.db import models
-
+from geopy.distance import geodesic
 # models here. -> point to db tables (basically table definitions*)
 
 #store distances for future quick search w/out gMAPI
@@ -54,6 +54,7 @@ class Order(models.Model):
     pick_up_location = models.ForeignKey(Location, related_name='pick_up_location', on_delete=models.CASCADE)
     drop_off_location = models.ForeignKey(Location, related_name='drop_off_location', on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    distance = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     order_notes = models.TextField(blank=True, null=True) 
@@ -61,7 +62,13 @@ class Order(models.Model):
     def __str__(self):
         return f"Order {self.id} - {self.status}"
 
-from django.db import models
+    def save(self, *args, **kwargs):
+        if self.pick_up_location and self.drop_off_location:
+            pickup_coords = (self.pick_up_location.latitude, self.pick_up_location.longitude)
+            dropoff_coords = (self.drop_off_location.latitude, self.drop_off_location.longitude)
+            self.distance = round(geodesic(pickup_coords, dropoff_coords).kilometers, 2)
+        super().save(*args, **kwargs)
+
 
 class RiderMemory(models.Model):
     rider_id = models.CharField(max_length=255)  # The sender_id or phone number

@@ -1,9 +1,21 @@
 from .models import Rider, Location, Order, User
+from dotenv import load_dotenv
+import os
 from geopy.geocoders import Nominatim
 from django.db.models import Q
+import requests
 
 NAIROBI_CBD_LAT = -1.286389
 NAIROBI_CBD_LONG = 36.817223
+
+# Load the .env file
+load_dotenv()
+
+# Retrieve API key from .env
+API_KEY = os.getenv("GOOGLE_API_KEY_DP")
+
+if not API_KEY:
+    raise EnvironmentError("API key not found. Please add GMAPS_API_KEY to your .env file.")
 
 def get_client_id(order_id):
     try:
@@ -126,7 +138,7 @@ def get_order_id(phone_number):
         print(f'No rider found with phone number: {phone_number} , error {e}')
         return None
 
-def post_order_from_chat(pickup, dropoff, phone_number, notes):
+def post_order_from_chat(pickup, dropoff, phone_number, notes, distance):
     """Uploads orders to database from chat"""
      # Get lat/long for pickup and dropoff locations
     # pickup_lat, pickup_long = get_lat_long(pickup)
@@ -201,10 +213,57 @@ def get_order_from_db():
     """Get available/pending orders from the database for the riders"""
     return False
 
+#distance calculators
 
-def calculate_distance(dropoff, pickup):
-    """Calculate distance from pickup to dropoff via GMaps"""
-    return False
+
+def get_coordinates(location_name):
+    """
+    Get latitude and longitude for a given location name using Google Maps Geocoding API.
+    
+    Args:
+        location_name (str): The name of the location.
+    
+    Returns:
+        tuple: (latitude, longitude) of the location.
+    """
+    geocoding_url = "https://maps.googleapis.com/maps/api/geocode/json"
+    params = {"address": location_name, "key": API_KEY}
+    response = requests.get(geocoding_url, params=params)
+    data = response.json()
+    
+    if data["status"] == "OK":
+        location = data["results"][0]["geometry"]["location"]
+        return location["lat"], location["lng"]
+    else:
+        raise ValueError(f"Error geocoding {location_name}: {data['status']}")
+
+def get_distance(location1, location2, mode="driving"):
+    """
+    Calculate the distance between two locations using Google Maps Distance Matrix API.
+    
+    Args:
+        location1 (str): The name of the first location.
+        location2 (str): The name of the second location.
+        mode (str): Travel mode (e.g., "driving", "walking", "bicycling", "transit").
+    
+    Returns:
+        float: Distance between the two locations in kilometers.
+    """
+    distance_matrix_url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+    params = {
+        "origins": location1,
+        "destinations": location2,
+        "key": API_KEY,
+        "mode": mode
+    }
+    response = requests.get(distance_matrix_url, params=params)
+    data = response.json()
+    
+    if data["status"] == "OK":
+        distance_km = data["rows"][0]["elements"][0]["distance"]["value"] / 1000  # meters to km
+        return distance_km
+    else:
+        raise ValueError(f"Error calculating distance: {data['status']}, {data}")
 
 
 def delivery_completed():
