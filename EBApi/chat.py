@@ -215,79 +215,78 @@ def clear_client_memory(client_id: str):
 
 # Function to send rider notifications and handle follow-ups
 def handle_rider_conversation(sender_id, message, order_id=0):
-    return
-    # # Get or create memory for the rider
-    # rider_memory = get_rider_memory(sender_id)
-    # # Retrieve conversation history
-    # memory_data = rider_memory.load_memory_variables({})
-    # chat_history = memory_data.get('history', [])
+    # Get or create memory for the rider
+    rider_memory = get_rider_memory(sender_id)
+    # Retrieve conversation history
+    memory_data = rider_memory.load_memory_variables({})
+    chat_history = memory_data.get('history', [])
 
-    # # Ensure chat_history is a list, even if empty
-    # if isinstance(chat_history, str):
-    #     chat_history = []  # Initialize as empty list if it's an empty string
+    # Ensure chat_history is a list, even if empty
+    if isinstance(chat_history, str):
+        chat_history = []  # Initialize as empty list if it's an empty string
 
-    # # Prepare the input for the rider chain 
-    # riders_input = {
-    #     "input": message,
-    #     "conversation_history": chat_history
-    # }
+    # Prepare the input for the rider chain 
+    riders_input = {
+        "input": message,
+        "conversation_history": chat_history
+    }
     
-    # # Invoke the LangChain model to generate the response for the rider
-    # response = riders_chain.invoke(riders_input)
+    # Invoke the LangChain model to generate the response for the rider
+    response = riders_chain.invoke(riders_input)
     
-    # # Store the conversation in the rider's memory
-    # rider_memory.save_context({"input": message}, {"output": response})
+    # Store the conversation in the rider's memory
+    rider_memory.save_context({"input": message}, {"output": response})
 
-    # # Save the conversation history to MySQL
-    # print(f"\n\nRider Memory: Before saving, {rider_memory}")
-    # save_rider_memory(sender_id, chat_history)
-    # print(f"\n\nRider Memory: After saving, {rider_memory}")
+    # Save the conversation history to MySQL
+    print(f"\n\nRider Memory: Before saving, {rider_memory}")
+    save_rider_memory(sender_id, chat_history)
+    print(f"\n\nRider Memory: After saving, {rider_memory}")
 
-    # # Send the notification to the rider
-    # send_message_to_rider(sender_id, response)
+    # Send the notification to the rider
+    send_message_to_rider(sender_id, response)
 
-    # # Check if rider accepts delivery
-    # delivery_acceptance = riders_acceptance_chain.invoke(riders_input)
-    # print('\n\nOrder ID Print Statement: ', delivery_acceptance['order_id'], '\n\n')
-    # print('\n\nOrder ID Type: ', type(delivery_acceptance['order_id']), '\n\n')
+    # Check if rider accepts delivery
+    delivery_acceptance = riders_acceptance_chain.invoke(riders_input)
+    print('\n\nOrder ID Print Statement: ', delivery_acceptance['order_id'], '\n\n')
+    print('\n\nOrder ID Type: ', type(delivery_acceptance['order_id']), '\n\n')
 
-    # # Send message to client to rider accepts request
-    # if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
-    #     if check_order(delivery_acceptance['order_id']):
-    #         print('\n\nDelivery Order ID: ', {delivery_acceptance['order_id']}, '\n\n')
-    #         send_message_to_rider(sender_id, 'Am sorry. It seems like the order has already been taken')
-    #     else:
-    #         message = (
-    #             f"Good news! Your delivery has been accepted by a rider. "
-    #             f"You can contact the rider directly for any updates or coordination at {sender_id}. "
-    #             f"If you have any further questions or need assistance, feel free to reach out. "
-    #         )
-    #         handle_client_conversation(f"whatsapp:{delivery_acceptance['phone_number']}", message, "notification")
+    # Send message to client to rider accepts request
+    if delivery_acceptance['acceptance'] == 'Yes' and delivery_acceptance['phone_number'] != " ":
+        if check_order(delivery_acceptance['order_id']):
+            print('\n\nDelivery Order ID: ', {delivery_acceptance['order_id']}, '\n\n')
+            send_message_to_rider(sender_id, 'Am sorry. It seems like the order has already been taken')
+        else:
+            message = (
+                f"Good news! Your delivery has been accepted by a rider. "
+                f"You can contact the rider directly for any updates or coordination at {sender_id}. "
+                f"If you have any further questions or need assistance, feel free to reach out. "
+            )
+            handle_client_conversation(f"whatsapp:{delivery_acceptance['phone_number']}", message, "notification")
 
-    #         rider_id = get_rider_by_phone(sender_id)
+            rider_id = get_rider_by_phone(sender_id)
 
-    #         update_order_status(delivery_acceptance['order_id'], 'active', rider_id)
+            update_order_status(delivery_acceptance['order_id'], 'active', rider_id)
     
-    # delivery_completed = delivery_completion_chain.invoke(riders_input)
+    delivery_completed = delivery_completion_chain.invoke(riders_input)
 
 
-    # if delivery_completed['completed'] == 'Yes':
-    #     rider_id = get_rider_by_phone(sender_id)
-    #     completed_order_id = get_order_id(sender_id)
-    #     update_order_status(completed_order_id, 'completed', rider_id)
-    #     clear_rider_memory(sender_id)
-    #     print('\n\nRider Sender ID: ' , sender_id, '\n\n')
+    if delivery_completed['completed'] == 'Yes':
+        rider_id = get_rider_by_phone(sender_id)
+        completed_order_id = get_order_id(sender_id)
+        update_order_status(completed_order_id, 'completed', rider_id)
+        clear_rider_memory(sender_id)
+        print('\n\nRider Sender ID: ' , sender_id, '\n\n')
 
-    #     client_id = get_client_id(completed_order_id)
-    #     client = User.objects.get(id=client_id)
-    #     client_number = convert_to_whatsapp(client.phone_number)
-    #     print('\n\nClient Print 1: ', client, '\n\n')
-    #     print('\n\nClient Print 2: ', client_number, '\n\n')
-    #     print('\n\nClient Print 3: ', client_id, '\n\n')
-    #     message = "I am pleased to inform you that your delivery has been successfully completed!\n\nWe hope everything went smoothly with your ride. Now that your order is complete, please proceed with making your payment. \n\nIf you have any feedback or questions, please don't hesitate to contact us. Your satisfaction is our priority! Thank you for choosing Ebikes Africa and we look forward to serving you again soon."
-    #     handle_client_conversation(client_number, message, "notification")
-    #     print("\n\nclear client memory \n\n")
-    #     clear_client_memory(client_number)
+        client_id = get_client_id(completed_order_id)
+        client = User.objects.get(id=client_id)
+        client_number = convert_to_whatsapp(client.phone_number)
+        print('\n\nClient Print 1: ', client, '\n\n')
+        print('\n\nClient Print 2: ', client_number, '\n\n')
+        print('\n\nClient Print 3: ', client_id, '\n\n')
+        message = "I am pleased to inform you that your delivery has been successfully completed!\n\nWe hope everything went smoothly with your ride. Now that your order is complete, please proceed with making your payment. \n\nIf you have any feedback or questions, please don't hesitate to contact us. Your satisfaction is our priority! Thank you for choosing Ebikes Africa and we look forward to serving you again soon."
+        handle_client_conversation(client_number, message, "notification")
+        print("\n\nclear client memory \n\n")
+        clear_client_memory(client_number)
 
 
 def handle_client_conversation(sender_id, message, type='general'):
@@ -312,9 +311,7 @@ def handle_client_conversation(sender_id, message, type='general'):
         # Invoke the LangChain chatbot model
         response = client_chain.invoke(input_data)
         client_memory.save_context({"input": message}, {"output": response})
-
-        print(f"\n\n")
-
+        
         # Save the conversation history to MySQL
         print(f"\n\nClient Memory: Before saving, {client_memory}")
         save_client_memory(sender_id, chat_history)
@@ -338,12 +335,16 @@ def handle_client_conversation(sender_id, message, type='general'):
         print(f'\n\nDelivery Request 1: {delivery_request}\n\n')
         try:
             delivery_distance = get_distance(delivery_request['pickup_point_of_interest'], delivery_request['dropoff_point_of_interest'])
-        except exception as e:
+            # delivery_price = 200
+            send_message_to_client(sender_id, f"The calculated distance between {delivery_request['pickup_location']} and {delivery_request['dropoff_location']} is {delivery_distance}.")
+        except Exception as e:
             delivery_distance = 0
+            
         print(f'\n\nDistance Obtained: {delivery_distance}\n\n')
         delivery_request['distance'] = delivery_distance
 
         print(f'\n\nExisting order: {existing_order}\n\n')
+
         if existing_order:
             p_up = get_location_id_by_address(delivery_request['pickup_location'])
             d_off = get_location_id_by_address(delivery_request['dropoff_location'])
@@ -366,7 +367,6 @@ def handle_client_conversation(sender_id, message, type='general'):
                     f"Order Id: {existing_order.id} has been updated by the client, {delivery_request['phone_number']}. "
                     f"If the delivery's pickup location has been changed to {existing_order.pick_up_location} or the dropoff location changed to {existing_order.drop_off_location}, "
                     f"notify these changes to the riders. Ensure the client phone number and order ID are mentioned."
-                    f"Also dont forget the distance between the pick up and drop off points which is {delivery_distance}."
                     f"Avoid using courteous phrases like 'Thank you for reaching out' or 'Thank you for your inquiry; just focus on providing the necessary information to the riders." 
                 )
 
@@ -375,6 +375,8 @@ def handle_client_conversation(sender_id, message, type='general'):
                 return
         elif (delivery_request['pickup_location'] != "None" and delivery_request['dropoff_location'] != "None"):
             print("New order")
+            print(f'\n\nDelivery Distance - New: {delivery_request["distance"]}')
+
             new_order = post_order_from_chat(delivery_request['pickup_location'], delivery_request['dropoff_location'], sender_id, delivery_request['Notes'], delivery_request['distance'])
             # Message for new request
             new_request_message = (
