@@ -66,16 +66,16 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 #db
 
 #local db settings
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'EBA_backend_db',
-        'USER': 'root',
-        'PASSWORD': 'ebabackenddb',
-        'HOST': '127.0.1',  # Set to empty string for localhost.
-        'PORT': '3306',  # Set to empty string for default.
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'EBA_backend_db',
+#         'USER': 'root',
+#         'PASSWORD': 'ebabackenddb',
+#         'HOST': '127.0.1',  # Set to empty string for localhost.
+#         'PORT': '3306',  # Set to empty string for default.
+#     }
+# }
 """
 #rds db settings - use for deploy
 DATABASES = {
