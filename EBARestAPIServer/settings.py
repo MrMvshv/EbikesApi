@@ -36,7 +36,7 @@ SECRET_KEY = "django-insecure-*xm3t@6%j9)%wbfe4s)*9qxe-)auivow$*8h8p&9c2(=4gy5r7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [".awsapprunner.com"]
 
 
 # Application definition
@@ -77,14 +77,14 @@ DATABASES = {
     }
 }
 """
-#gcloud db settings - use for deploy
+#rds db settings - use for deploy
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'EBA_backend_db',
-        'USER': 'root',
+        'USER': 'admin',
         'PASSWORD': 'ebabackenddb',
-        'HOST': '/cloudsql/backend-430606:us-central1:ebikesbackend',  # Set to empty string for localhost.
+        'HOST': 'django-apprunner-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',  # Set to empty string for localhost.
         'PORT': '3306',  # Set to empty string for default.
     }
 }
@@ -94,6 +94,7 @@ DATABASES = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     #"django.middleware.csrf.CsrfViewMiddleware",
@@ -171,6 +172,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
