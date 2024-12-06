@@ -3,19 +3,14 @@ runtime: python311
 build:
   commands:
     build:
-      - pip3 install --upgrade pip
       - pip install -r requirements.txt
-      - python manage.py collectstatic --noinput
-      - python manage.py migrate --noinput
+      - python3 manage.py collectstatic --noinput
+      - python3 manage.py migrate --noinput
   env:
     - name: DEBUG
       value: "False"
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"
-    - name: MYSQLCLIENT_CFLAGS
-      value: "-I/usr/include/mysql"
-    - name: MYSQLCLIENT_LDFLAGS
-      value: "-L/usr/lib/x86_64-linux-gnu -lmysqlclient"
 
 run:
   runtime-version: 3.11
