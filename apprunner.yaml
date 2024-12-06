@@ -7,8 +7,6 @@ build:
       - yum install -y pkg-config
       - yum install -y python3-devel mariadb105-devel.x86_64 gcc gcc-c++ make libffi-devel
     build:
-      - python3 -m venv myenv
-      - source myenv/bin/activate
       - pip3 install --upgrade pip
       - pip3 install -r requirements.txt
       - python3 manage.py collectstatic --noinput
