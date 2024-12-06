@@ -5,9 +5,7 @@ build:
     pre-build:
       - yum update -y
       - yum install -y pkg-config
-      - dnf remove -y mysql-community-*
-      - dnf remove -y mysql80-community-release
-      - yum install -y python3-devel mysql-devel gcc gcc-c++ make libffi-devel
+      - yum install -y python3-devel gcc gcc-c++ make libffi-devel
     build:
       - pip3 install -r requirements.txt
       - python3 manage.py collectstatic --noinput
