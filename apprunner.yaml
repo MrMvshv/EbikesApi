@@ -2,10 +2,6 @@ version: 1.0
 runtime: python311
 build:
   commands:
-    pre-build:
-      - yum update -y
-      - yum install -y python3-devel mysql-devel gcc
-    build:
     build:
       - pip3 install --upgrade pip
       - pip install -r requirements.txt
@@ -23,10 +19,22 @@ run:
   network:
     port: 8000
   env:
+    - name: DJANGO_SETTINGS_MODULE
+      value: "EBARestAPIServer.settings"
     - name: DEBUG
       value: "False"
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"
+    - name: DB_NAME
+      value: : "EBA_backend_db"
+    - name: DB_USER
+      value: "admin"
+    - name: DB_PASSWORD
+      value: "ebabackenddb"
+    - name: DB_HOST
+      value: "django-apprunner-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com"
+    - name: DB_PORT
+      value: "3306"
     - name: GOOGLE_API_KEY
       value: "AIzaSyCN-0aWhXvbLH4e62-UQWLp2eNKA8dP--4"
     - name: GOOGLE_API_KEY_DP
