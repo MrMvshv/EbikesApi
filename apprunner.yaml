@@ -12,6 +12,10 @@ build:
       value: "False"
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"
+    - name: MYSQLCLIENT_CFLAGS
+      value: "-I/usr/include/mysql"
+    - name: MYSQLCLIENT_LDFLAGS
+      value: "-L/usr/lib/x86_64-linux-gnu -lmysqlclient"
 
 run:
   runtime-version: 3.11
