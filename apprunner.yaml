@@ -31,7 +31,7 @@ run:
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"
     - name: DB_NAME
-      value: "EBA_backend_db"
+      value: "django-apprunner-db"
     - name: DB_USER
       value: "admin"
     - name: DB_PASSWORD
