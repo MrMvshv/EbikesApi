@@ -2,10 +2,10 @@ version: 1.0
 runtime: python311
 build:
   commands:
-    pre-build:
-      - yum update -y
-      - yum install -y pkg-config
-      - yum install -y python3-devel gcc gcc-c++ make libffi-devel
+    # pre-build:
+    #   - yum update -y
+    #   - yum install -y pkg-config
+    #   - yum install -y python3-devel gcc gcc-c++ make libffi-devel
     build:
       - pip3 install -r requirements.txt
       - python3 manage.py collectstatic --noinput
@@ -17,7 +17,7 @@ build:
       value: ".awsapprunner.com"
 
 run:
-  runtime-version: 3.11
+  runtime-version: 3.8
   command: gunicorn --workers 2 EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 --threads 1 --timeout 120 --access-logfile '-' --error-logfile '-'
   network:
     port: 8000
