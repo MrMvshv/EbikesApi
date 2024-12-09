@@ -62,7 +62,7 @@ SECRET_KEY = "django-insecure-*xm3t@6%j9)%wbfe4s)*9qxe-)auivow$*8h8p&9c2(=4gy5r7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".awsapprunner.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -118,9 +118,11 @@ DATABASES = {
 }
 
 
-if "DATABASE_SECRET" in environ:
-    database_secret = environ.get("DATABASE_SECRET")
-    db_url = json.loads(database_secret)["DATABASE_URL"]
+if "DATABASE_SECRET" in os.environ:
+    database_secret = os.environ.get("DATABASE_SECRET")
+    db_url = json.loads(database_secret).get("DATABASE_URL")
+    if not db_url:
+        raise ValueError("DATABASE_URL is missing in DATABASE_SECRET")
     DATABASES = {"default": dj_database_url.parse(db_url)}
 else:
     DATABASES = {"default": dj_database_url.parse("sqlite:///db.sqlite3")}
