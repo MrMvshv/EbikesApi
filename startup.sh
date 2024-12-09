@@ -1,3 +1,3 @@
 #!/bin/bash
 chmod +x startup.sh
-cd /var/task && exec gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 --workers 2
+gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 --workers 2
