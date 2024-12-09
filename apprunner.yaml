@@ -9,10 +9,6 @@ build:
       - yum install -y python3-devel mariadb105-devel.x86_64 gcc gcc-c++ make libffi-devel
     build:
       - pip3 install -r requirements.txt
-      - python3 manage.py makemigrations
-      - python3 manage.py migrate --noinput
-      - python3 manage.py collectstatic --noinput
-      - chmod +x startup.sh
 
 run:
   runtime-version: 3.11
