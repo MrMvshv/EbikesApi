@@ -72,7 +72,7 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 #         'NAME': 'EBA_backend_db',
 #         'USER': 'root',
 #         'PASSWORD': 'ebabackenddb',
-#         'HOST': '127.0.1',  # Set to empty string for localhost.
+#         'HOST': '127.0.0.1',  # Set to empty string for localhost.
 #         'PORT': '3306',  # Set to empty string for default.
 #     }
 # }

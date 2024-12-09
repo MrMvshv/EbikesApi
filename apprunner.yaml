@@ -1,5 +1,5 @@
 version: 1.0
-runtime: python311
+runtime: python
 build:
   commands:
     pre-build:
@@ -7,10 +7,9 @@ build:
       - yum install -y pkg-config
       - yum install -y python3-devel mariadb105-devel.x86_64 gcc gcc-c++ make libffi-devel
     build:
-      - pip3 install --upgrade pip
-      - pip3 install -r requirements.txt
-      - python3 manage.py migrate --noinput
-      - python3 manage.py collectstatic --noinput
+      - pip install -r requirements.txt
+      - python manage.py migrate --noinput
+      - python manage.py collectstatic --noinput
       
   env:
     - name: DEBUG
@@ -31,13 +30,13 @@ run:
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"
     - name: DB_NAME
-      value: "django-apprunner-db"
+      value: "EBA_backend_db"
     - name: DB_USER
       value: "admin"
     - name: DB_PASSWORD
       value: "ebabackenddb"
     - name: DB_HOST
-      value: "django-apprunner-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com"
+      value: "django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com"
     - name: DB_PORT
       value: "3306"
     - name: GOOGLE_API_KEY
