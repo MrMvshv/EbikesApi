@@ -12,7 +12,7 @@ build:
       - chmod +x startup.sh
 
 run:
-  runtime-version: 3.8.16
+  runtime-version: 3.11
   command: ./startup.sh
   network:
     port: 8000
