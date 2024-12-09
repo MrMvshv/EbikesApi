@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
         'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
