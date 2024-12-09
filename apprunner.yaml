@@ -17,19 +17,6 @@ build:
       value: "False"
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"
-
-run:
-  runtime-version: 3.11
-  command: gunicorn --workers 2 EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 --threads 1 --timeout 120 --access-logfile '-' --error-logfile '-'
-  network:
-    port: 8000
-  env:
-    - name: DJANGO_SETTINGS_MODULE
-      value: "EBARestAPIServer.settings"
-    - name: DEBUG
-      value: "False"
-    - name: ALLOWED_HOSTS
-      value: ".awsapprunner.com"
     - name: DB_NAME
       value: "EBA_backend_db"
     - name: DB_USER
@@ -50,3 +37,17 @@ run:
       value: "404f984b46a551c7f19c294def03d410"
     - name: OPENAI_API_KEY
       value: "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"
+
+run:
+  runtime-version: 3.11
+  command: gunicorn --workers 2 EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 --threads 1 --timeout 120 --access-logfile '-' --error-logfile '-'
+  network:
+    port: 8000
+  env:
+    - name: DJANGO_SETTINGS_MODULE
+      value: "EBARestAPIServer.settings"
+    - name: DEBUG
+      value: "False"
+    - name: ALLOWED_HOSTS
+      value: ".awsapprunner.com"
+    
