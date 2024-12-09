@@ -76,7 +76,7 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 #         'PORT': '3306',  # Set to empty string for default.
 #     }
 # }
-"""
+
 #rds db settings - use for deploy
 DATABASES = {
     'default': {
@@ -88,7 +88,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
-"""
+
 
 
 MIDDLEWARE = [
