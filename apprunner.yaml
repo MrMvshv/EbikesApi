@@ -2,10 +2,10 @@ version: 1.0
 runtime: python
 build:
   commands:
-    pre-build:
-      - yum update -y
-      - yum install -y pkg-config
-      - yum install -y python3-devel mariadb105-devel.x86_64 gcc gcc-c++ make libffi-devel
+    # pre-build:
+    #   - yum update -y
+    #   - yum install -y pkg-config
+    #   - yum install -y python3-devel mariadb105-devel.x86_64 gcc gcc-c++ make libffi-devel
     build:
       - pip install -r requirements.txt
       - python manage.py migrate --noinput
@@ -18,7 +18,7 @@ build:
       value: ".awsapprunner.com"
 
 run:
-  runtime-version: 3.11
+  runtime-version: 3
   command: gunicorn --workers 2 EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 --threads 1 --timeout 120 --access-logfile '-' --error-logfile '-'
   network:
     port: 8000
