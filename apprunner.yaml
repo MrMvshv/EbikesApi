@@ -12,6 +12,7 @@ build:
       - python3 manage.py makemigrations
       - python3 manage.py migrate --noinput
       - python3 manage.py collectstatic --noinput
+      - chmod +x startup.sh
 
 run:
   runtime-version: 3.11
