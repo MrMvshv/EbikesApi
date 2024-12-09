@@ -32,7 +32,7 @@ build:
 
 run:
   runtime-version: 3.11
-  command: python3 -m gunicorn --workers 2 EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 --threads 1 --timeout 120 --access-logfile '-' --error-logfile '-'
+  command: sh startup.sh
   network:
     port: 8000
   env:
