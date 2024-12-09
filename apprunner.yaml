@@ -1,6 +1,15 @@
 version: 1.0
 runtime: python311
 
+network:
+  vpc:
+    vpc_id: "vpc-0c5782aa8e61c5a14"  # Your VPC ID
+    subnets:  # At least two subnets in different AZs
+      - "subnet-0eddb63b39a6bb31d"
+      - "subnet-0eb81809fd899893e"
+    security_groups:
+      - "sg-066a968f7af054d2c"
+
 build:
   commands:
     pre-build:
