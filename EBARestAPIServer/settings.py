@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-import os
+import json
+import dj_database_url
+import os import environ
 # settings.py
 import sys
 
@@ -66,18 +68,20 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 #db
 
 #local db settings
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'EBA_backend_db',
-#         'USER': 'root',
-#         'PASSWORD': 'ebabackenddb',
-#         'HOST': '127.0.0.1',  # Set to empty string for localhost.
-#         'PORT': '3306',  # Set to empty string for default.
-#     }
-# }
-
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'EBA_backend_db',
+        'USER': 'root',
+        'PASSWORD': 'ebabackenddb',
+        'HOST': '127.0.0.1',  # Set to empty string for localhost.
+        'PORT': '3306',  # Set to empty string for default.
+    }
+}
+"""
 #rds db settings - use for deploy
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -90,6 +94,12 @@ DATABASES = {
 }
 
 
+# if "DATABASE_SECRET" in environ:
+#     database_secret = environ.get("DATABASE_SECRET")
+#     db_url = json.loads(database_secret)["DATABASE_URL"]
+#     DATABASES = {"default": dj_database_url.parse(db_url)}
+# else:
+#     DATABASES = {"default": dj_database_url.parse("sqlite:///db.sqlite3")}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
