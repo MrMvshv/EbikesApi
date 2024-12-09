@@ -14,12 +14,36 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import json
-# import dj_database_url
+import dj_database_url
 import os
 # settings.py
 import sys
+import boto3
+from botocore.exceptions import ClientError
 
 
+def get_secret():
+
+    secret_name = "EBIKESAPI_DATABASE_SECRET"
+    region_name = "eu-west-1"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+
+    secret = get_secret_value_response['SecretString']
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
@@ -68,7 +92,7 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 #db
 
 #local db settings
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -79,7 +103,7 @@ DATABASES = {
         'PORT': '3306',  # Set to empty string for default.
     }
 }
-"""
+
 #rds db settings - use for deploy
 
 DATABASES = {
@@ -94,12 +118,12 @@ DATABASES = {
 }
 
 
-# if "DATABASE_SECRET" in environ:
-#     database_secret = environ.get("DATABASE_SECRET")
-#     db_url = json.loads(database_secret)["DATABASE_URL"]
-#     DATABASES = {"default": dj_database_url.parse(db_url)}
-# else:
-#     DATABASES = {"default": dj_database_url.parse("sqlite:///db.sqlite3")}
+if "DATABASE_SECRET" in environ:
+    database_secret = environ.get("DATABASE_SECRET")
+    db_url = json.loads(database_secret)["DATABASE_URL"]
+    DATABASES = {"default": dj_database_url.parse(db_url)}
+else:
+    DATABASES = {"default": dj_database_url.parse("sqlite:///db.sqlite3")}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

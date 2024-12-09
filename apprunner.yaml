@@ -63,6 +63,6 @@ run:
       value: "404f984b46a551c7f19c294def03d410"
     - name: OPENAI_API_KEY
       value: "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"
-  # secrets:
-  #   - name: DATABASE_SECRET
-  #     value-from: "arn:aws:secretsmanager:eu-west-1:111122223333:secret:my-django-database-secret-kh2vEL"
+  secrets:
+    - name: DATABASE_SECRET
+      value-from: "arn:aws:secretsmanager:eu-west-1:448049802522:secret:EBIKESAPI_DATABASE_SECRET-qWOWU3"
