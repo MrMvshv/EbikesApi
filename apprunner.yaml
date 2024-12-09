@@ -11,29 +11,24 @@ build:
       - pip3 install --upgrade pip
       - pip3 install -r requirements.txt
   env:
+    - name: PATH
+      value: "/usr/local/bin:/usr/bin:/bin:/usr/local/lib/python3.11/site-packages"
+    - name: PYTHONPATH
+      value: "/var/task"
     - name: DJANGO_SETTINGS_MODULE
       value: "EBARestAPIServer.settings"
     - name: DEBUG
       value: "False"
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"
-    - name: DB_NAME
-      value: "EBA_backend_db"
-    - name: DB_USER
-      value: "EBA_backend_db"
-    - name: DB_PASSWORD
-      value: "ebabackenddb"
-    - name: DB_HOST
-      value: "django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com"
-    - name: DB_PORT
-      value: "3306"
 
 run:
   runtime-version: 3.11
-  command: ./startup.sh
+  command: sh /var/task/startup.sh
   network:
     port: 8000
   env:
+    - name: 
     - name: DJANGO_SETTINGS_MODULE
       value: "EBARestAPIServer.settings"
     - name: DEBUG
