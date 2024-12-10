@@ -8,6 +8,7 @@ build:
       - yum install -y pkg-config mariadb105-devel.x86_64 gcc python3-devel
       
     build:
+      - source myenv/bin/activate
       - pip3 install -r requirements.txt
 run:
   runtime-version: 3.11
