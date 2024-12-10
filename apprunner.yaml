@@ -5,15 +5,19 @@ build:
   commands:
     pre-build:
       - yum update -y
-      - yum install -y pkg-config mariadb105-devel.x86_64 gcc python3-devel
+      - yum install -y pkg-config mariadb105-devel.x86_64 gcc gcc-c++ make mysql python3-devel
+      - python3 -m myenv
+      - source myenv/bin/activate
       
     build:
+      - pip3 install --upgrade pip
       - pip3 install -r requirements.txt
-      - python3 manage.py migrate --no-input
+      - python3 manage.py makemigrations
+      - python3 manage.py migrate 
       - python3 manage.py collectstatic --no-input
 run:
   runtime-version: 3.11
-  command: gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 
+  command: source myenv/bin/activate && gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 
   network:
     port: 8000
   env:
@@ -26,7 +30,7 @@ run:
     - name: DB_NAME
       value: "EBA_backend_db"
     - name: DB_USER
-      value: "EBA_backend_db"
+      value: "admin"
     - name: DB_PASSWORD
       value: "ebabackenddb"
     - name: DB_HOST
