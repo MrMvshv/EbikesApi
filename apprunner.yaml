@@ -16,7 +16,7 @@ build:
 run:
   runtime-version: 3.11
   pre-run:
-    - pip3 install django==5.0.6 gunicorn==22.0.0 python-dotenv==1.0.1
+    - pip3 install django==5.0.6 gunicorn==22.0.0 python-dotenv==1.0.1 dj-database-url==1.3.0 boto3==1.35.76
   command: python3 -m gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000
   network:
     port: 8000
