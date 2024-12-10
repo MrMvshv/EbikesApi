@@ -16,6 +16,8 @@ run:
   network:
     port: 8000
   env:
+    - name: PATH
+      value: "/usr/local/bin"
     - name: DEBUG
       value: "False"
     - name: ALLOWED_HOSTS
