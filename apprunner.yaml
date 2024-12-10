@@ -6,10 +6,10 @@ build:
     pre-build:
       - yum update -y
       - yum install -y pkg-config mariadb105-devel.x86_64 gcc gcc-c++ make python3-devel
-      - yum install -y gunicorn
       
     build:
       - pip3 install --upgrade pip
+      - pip3 install gunicorn 
       - pip3 install -r requirements.txt
       - python3 manage.py makemigrations
       - python3 manage.py migrate 
