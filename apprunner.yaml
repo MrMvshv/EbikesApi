@@ -6,6 +6,7 @@ build:
     pre-build:
       - yum update -y
       - yum install -y pkg-config mariadb105-devel.x86_64 gcc gcc-c++ make python3-devel
+      - yum install -y gunicorn
       
     build:
       - pip3 install --upgrade pip
@@ -15,7 +16,7 @@ build:
       - python3 manage.py collectstatic --no-input
 run:
   runtime-version: 3.11
-  command: gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000
+  command: python3 -m gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000
   network:
     port: 8000
   env:
