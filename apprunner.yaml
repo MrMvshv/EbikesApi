@@ -15,7 +15,7 @@ build:
       - python3 manage.py collectstatic --no-input
 run:
   runtime-version: 3.11
-  command: myenv/bin/gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000 
+  command: sh -c 'gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000' 
   network:
     port: 8000
   env:
