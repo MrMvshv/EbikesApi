@@ -18,6 +18,8 @@ run:
   network:
     port: 8000
   env:
+    - name: PATH
+      value: "/usr/local/bin:/usr/bin:/bin:/usr/local/lib/python3.11/site-packages"
     - name: DEBUG
       value: "False"
     - name: ALLOWED_HOSTS
