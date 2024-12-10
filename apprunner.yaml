@@ -5,7 +5,7 @@ build:
   commands:
     pre-build:
       - yum update -y
-      - yum install -y pkg-config mariadb105-devel.x86_64 gcc gcc-c++ make mysql python3-devel
+      - yum install -y pkg-config mariadb105-devel.x86_64 gcc gcc-c++ make python3-devel
       - python3 -m myenv
       - source myenv/bin/activate
       
