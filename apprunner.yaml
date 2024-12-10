@@ -16,6 +16,8 @@ build:
       - python3 manage.py collectstatic --no-input
 run:
   runtime-version: 3.11
+  pre-run:
+    - pip3 install gunicorn
   command: python3 -m gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000
   network:
     port: 8000
