@@ -109,11 +109,11 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'NAME': 'EBA_backend_db',
+        'USER': 'admin',
+        'PASSWORD': 'ebabackenddb',
         'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'PORT': '3306',
     }
 }
 
