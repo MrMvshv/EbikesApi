@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-import json
 import dj_database_url
 import os
 # settings.py
@@ -78,10 +77,12 @@ DATABASES['default'] = dj_database_url.config(
     conn_health_checks=True,
 )
 
-# Added the `init_command` option for setting SQL mode
-DATABASES['default']['OPTIONS'] = {
-    'init_command': "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"
-}
+# Dynamically set OPTIONS with init_command if the database is MySQL
+if DATABASES['default'].get('ENGINE') == 'django.db.backends.mysql':
+    DATABASES['default'].setdefault('OPTIONS', {})
+    DATABASES['default']['OPTIONS']['init_command'] = (
+        "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"
+    )
 
 """
 # Local Development Configuration
