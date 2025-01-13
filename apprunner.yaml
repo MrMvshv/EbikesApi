@@ -10,26 +10,27 @@ build:
     build:
       - pip3 install --upgrade pip
       - pip3 install -r requirements.txt
-      - python3 manage.py makemigrations
-      - python3 manage.py migrate 
       - python3 manage.py collectstatic --no-input
+      
 run:
   runtime-version: 3.11
   pre-run:
     - yum install -y pkg-config mariadb105-devel.x86_64 gcc gcc-c++ make python3-devel
     - pip3 install -r requirements.txt
+    - python3 manage.py makemigrations
+    - python3 manage.py migrate
   command: python3 -m gunicorn EBARestAPIServer.wsgi:application --bind 0.0.0.0:8000
   network:
     port: 8000
   env:
     - name: PYTHONPATH
-      value: "/app"
+      value: "/var/app" 
     - name: DJANGO_SETTINGS_MODULE
       value: "EBARestAPIServer.settings"
     - name: DEBUG
       value: "False"
     - name: ALLOWED_HOSTS
-      value: ".awsapprunner.com"
+      value: ".awsapprunner.com"  
   secrets:
     - name: DATABASE_SECRET
       value-from: "arn:aws:secretsmanager:eu-west-1:448049802522:secret:EBIKESAPI_DATABASE_SECRET-qWOWU3"
@@ -43,3 +44,5 @@ run:
       value-from: "arn:aws:secretsmanager:eu-west-1:448049802522:secret:EBIKESAPI_DATABASE_SECRET-qWOWU3:TWILIO_AUTH_TOKEN::"
     - name: OPENAI_API_KEY
       value-from: "arn:aws:secretsmanager:eu-west-1:448049802522:secret:EBIKESAPI_DATABASE_SECRET-qWOWU3:OPENAI_API_KEY::"
+    - name: SECRET_KEY
+      value-from: "arn:aws:secretsmanager:eu-west-1:448049802522:secret:EBIKESAPI_DATABASE_SECRET-qWOWU3:SECRET_KEY::"  

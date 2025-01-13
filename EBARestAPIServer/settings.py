@@ -57,7 +57,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*xm3t@6%j9)%wbfe4s)*9qxe-)auivow$*8h8p&9c2(=4gy5r7"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -111,7 +111,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'EBA_backend_db',
         'USER': 'admin',
-        'PASSWORD': 'ebabackenddb',
+        'PASSWORD': 'hidden',
         'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
         'PORT': '3306',
     }
@@ -123,7 +123,14 @@ if "DATABASE_SECRET" in os.environ:
     db_url = json.loads(database_secret).get("DATABASE_URL")
     if not db_url:
         raise ValueError("DATABASE_URL is missing in DATABASE_SECRET")
-    DATABASES = {"default": dj_database_url.parse(db_url)}
+
+    db_config = dj_database_url.parse(db_url)
+    db_config.update({
+        'CONN_MAX_AGE': 600,
+        'CONN_HEALTH_CHECKS': True,
+    })
+
+    DATABASES = {"default": db_config}
 else:
     DATABASES = {"default": dj_database_url.parse("sqlite:///db.sqlite3")}
 
