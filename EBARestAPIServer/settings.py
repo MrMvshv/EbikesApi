@@ -18,32 +18,7 @@ import dj_database_url
 import os
 # settings.py
 import sys
-import boto3
-from botocore.exceptions import ClientError
 
-
-def get_secret():
-
-    secret_name = "EBIKESAPI_DATABASE_SECRET"
-    region_name = "eu-west-1"
-
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
-    except ClientError as e:
-        # For a list of exceptions thrown, see
-        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
-        raise e
-
-    secret = get_secret_value_response['SecretString']
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
@@ -90,33 +65,31 @@ MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c91
 MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 
 #db
+
 # AWS RDS Configuration
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'EBA_backend_db',
-#         'USER': 'admin',
-#         'PASSWORD': 'ebabackenddb',
-#         'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
-#         'PORT': '3306',
-#     }
-# }
+
 DATABASES = {
     'default': {}
 }
 
 DATABASES['default'] = dj_database_url.config(
-    default='mysql://admin:ebabackenddb@ebike-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com:3306/EBA_backend_db',
+    default=os.getenv('DATABASE_URL'),
     conn_max_age=600,
     conn_health_checks=True,
 )
+
+# Added the `init_command` option for setting SQL mode
+DATABASES['default']['OPTIONS'] = {
+    'init_command': "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"
+}
+
 """
 # Local Development Configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'EBA_backend_db',
-        'USER': 'EBA_backend_db',
+        'USER': 'root',
         'PASSWORD': 'ebabackenddb',
         'HOST': '127.0.0.1',
         'PORT': '3306',
