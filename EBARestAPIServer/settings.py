@@ -91,48 +91,35 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 
 #db
 
-#local db settings
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'EBA_backend_db',
-        'USER': 'root',
-        'PASSWORD': 'ebabackenddb',
-        'HOST': '127.0.0.1',  # Set to empty string for localhost.
-        'PORT': '3306',  # Set to empty string for default.
-    }
-}
-
-#rds db settings - use for deploy
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'EBA_backend_db',
-        'USER': 'admin',
-        'PASSWORD': 'hidden',
-        'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
-        'PORT': '3306',
-    }
-}
-
-
-if "DATABASE_SECRET" in os.environ:
-    database_secret = os.environ.get("DATABASE_SECRET")
-    db_url = json.loads(database_secret).get("DATABASE_URL")
-    if not db_url:
-        raise ValueError("DATABASE_URL is missing in DATABASE_SECRET")
-
-    db_config = dj_database_url.parse(db_url)
-    db_config.update({
-        'CONN_MAX_AGE': 600,
-        'CONN_HEALTH_CHECKS': True,
-    })
-
-    DATABASES = {"default": db_config}
+if os.getenv('AWS_EXECUTION_ENV'):  # This environment variable is present in AWS App Runner
+    # AWS RDS Configuration
+    try:
+        db_secret = json.loads(get_secret())
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': 'EBA_backend_db',
+                'USER': db_secret.get('username'),
+                'PASSWORD': db_secret.get('password'),
+                'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
+                'PORT': '3306',
+            }
+        }
+    except Exception as e:
+        print(f"Error loading RDS configuration: {e}")
+        raise
 else:
-    DATABASES = {"default": dj_database_url.parse("sqlite:///db.sqlite3")}
+    # Local Development Configuration
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'EBA_backend_db',
+            'USER': 'EBA_backend_db',
+            'PASSWORD': 'ebabackenddb',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+        }
+    }
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
