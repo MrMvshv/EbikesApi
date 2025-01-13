@@ -101,6 +101,10 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 #         'PORT': '3306',
 #     }
 # }
+DATABASES = {
+    'default': {}
+}
+
 DATABASES['default'] = dj_database_url.config(
     default='mysql://admin:ebabackenddb@django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com:3306/EBA_backend_db',
     conn_max_age=600,
