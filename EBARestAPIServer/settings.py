@@ -90,36 +90,31 @@ MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c91
 MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 
 #db
-
-if os.getenv('AWS_EXECUTION_ENV'):  # This environment variable is present in AWS App Runner
-    # AWS RDS Configuration
-    try:
-        db_secret = json.loads(get_secret())
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'EBA_backend_db',
-                'USER': db_secret.get('username'),
-                'PASSWORD': db_secret.get('password'),
-                'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
-                'PORT': '3306',
-            }
-        }
-    except Exception as e:
-        print(f"Error loading RDS configuration: {e}")
-        raise
-else:
-    # Local Development Configuration
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'EBA_backend_db',
-            'USER': 'EBA_backend_db',
-            'PASSWORD': 'ebabackenddb',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-        }
+# AWS RDS Configuration
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'EBA_backend_db',
+        'USER': 'admin',
+        'PASSWORD': 'ebabackenddb',
+        'HOST': 'django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com',
+        'PORT': '3306',
     }
+}
+
+"""
+# Local Development Configuration
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'EBA_backend_db',
+        'USER': 'EBA_backend_db',
+        'PASSWORD': 'ebabackenddb',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
+"""
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
