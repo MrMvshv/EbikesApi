@@ -106,7 +106,7 @@ DATABASES = {
 }
 
 DATABASES['default'] = dj_database_url.config(
-    default='mysql://admin:ebabackenddb@ebikes-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com:3306/EBA_backend_db',
+    default='mysql://admin:ebabackenddb@ebike-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com:3306/EBA_backend_db',
     conn_max_age=600,
     conn_health_checks=True,
 )
