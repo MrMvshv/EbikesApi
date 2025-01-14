@@ -68,12 +68,14 @@ MPESA_CALLBACK_URL = 'https://api.ebikesafrica.co.ke/res/mpesa'
 # AWS RDS Configuration
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+    'default': {}
 }
+
+DATABASES['default'] = dj_database_url.config(
+    default='mysql://admin:ebabackenddb@django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com:3306/EBA_backend_db',
+    conn_max_age=600,
+    conn_health_checks=True,
+)
 
 # Dynamically set OPTIONS with init_command if the database is MySQL
 if DATABASES['default'].get('ENGINE') == 'django.db.backends.mysql':
