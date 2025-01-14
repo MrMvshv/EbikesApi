@@ -2,11 +2,7 @@ version: 1.0
 runtime: python311
 
 build:
-  commands:
-    pre-build:
-      - yum update -y
-      - yum install -y pkg-config mariadb105-devel.x86_64 gcc gcc-c++ make python3-devel
-      
+  commands:  
     build:
       - pip3 install --upgrade pip
       - pip3 install -r requirements.txt
@@ -31,8 +27,6 @@ run:
       value: "False"
     - name: ALLOWED_HOSTS
       value: ".awsapprunner.com"  
-    - name: DATABASE_URL
-      value: "mysql://admin:ebabackenddb@django-db.ch8kwym6cbt2.eu-west-1.rds.amazonaws.com:3306/EBA_backend_db"
     - name: GOOGLE_API_KEY
       value: "AIzaSyCN-0aWhXvbLH4e62-UQWLp2eNKA8dP--4"
     - name: GOOGLE_API_KEY_DP
